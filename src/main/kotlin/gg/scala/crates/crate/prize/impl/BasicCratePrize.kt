@@ -10,7 +10,7 @@ import java.lang.reflect.Type
  */
 abstract class BasicCratePrize(
     private val name: String,
-    private val weight: Double,
+    var weightInternal: Double,
     private val description: List<String>,
     private val prizeType: Type,
     private val rarity: CratePrizeRarity = CratePrizeRarity.Common
@@ -21,5 +21,5 @@ abstract class BasicCratePrize(
     override fun getDescription() = this.description
 
     override fun getRarity() = this.rarity
-    override fun getWeight() = this.weight
+    override fun getWeight() = this.weightInternal
 }

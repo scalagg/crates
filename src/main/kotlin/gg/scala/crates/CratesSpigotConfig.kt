@@ -11,7 +11,7 @@ class CratesSpigotConfig
     @Comment("The menu scheme.")
     val menuScheme = arrayOf(
         "0X00X00X0",
-        "X1XX2XX3X",
+        "X1XX0XX0X",
         "0X00X00X0"
     )
 }

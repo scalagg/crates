@@ -5,3 +5,6 @@ package gg.scala.crates.crate.prize.composable
  * @since 8/13/2022
  */
 interface CompositeCratePrizeCreatorSession
+{
+    var weight: Double
+}

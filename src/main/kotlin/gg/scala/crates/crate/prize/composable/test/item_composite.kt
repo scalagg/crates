@@ -16,9 +16,10 @@ import org.bukkit.inventory.ItemStack
  * @since 8/13/2022
  */
 class ItemCratePrize(
-    private val material: Material
+    var material: Material,
+    weight: Double
 ) : BasicCratePrize(
-    "Item", 100.0, listOf(), ItemCratePrize::class.java
+    "Item", weight, listOf(), ItemCratePrize::class.java
 )
 {
     override fun applicableTo(player: Player) = true
@@ -31,23 +32,36 @@ class ItemCratePrize(
 }
 
 class ItemCompositeCratePrizeCreatorSession(
-    var material: Material = Material.ACACIA_DOOR
+    var material: Material = Material.ACACIA_DOOR,
+    override var weight: Double = 100.0
 ) : CompositeCratePrizeCreatorSession
 
-object ItemCompositeCratePrize : CompositeCratePrize<ItemCompositeCratePrizeCreatorSession>()
+object ItemCompositeCratePrize : CompositeCratePrize<ItemCratePrize>()
 {
     override fun getName() = "Item"
     override fun createSession() = ItemCompositeCratePrizeCreatorSession()
 
-    override fun create(session: ItemCompositeCratePrizeCreatorSession): CratePrize
+    override fun update(session: CompositeCratePrizeCreatorSession, prize: ItemCratePrize)
     {
-        return ItemCratePrize(session.material)
+        session as ItemCompositeCratePrizeCreatorSession
+
+        prize.material = session.material
+        prize.weightInternal = session.weight
+    }
+
+    override fun create(session: CompositeCratePrizeCreatorSession): CratePrize
+    {
+        session as ItemCompositeCratePrizeCreatorSession
+
+        return ItemCratePrize(session.material, session.weight)
     }
 
     override fun editorButtons(
-        session: ItemCompositeCratePrizeCreatorSession
+        session: CompositeCratePrizeCreatorSession
     ): List<Button>
     {
+        session as ItemCompositeCratePrizeCreatorSession
+
         return listOf(
             ItemBuilder
                 .of(Material.PAPER)

@@ -7,11 +7,13 @@ import net.evilblock.cubed.menu.Button
  * @author GrowlyX
  * @since 8/13/2022
  */
-abstract class CompositeCratePrize<T : CompositeCratePrizeCreatorSession>
+abstract class CompositeCratePrize<U : CratePrize>
 {
     abstract fun getName(): String
-    abstract fun createSession(): T
+    abstract fun createSession(): CompositeCratePrizeCreatorSession
 
-    abstract fun editorButtons(session: T): List<Button>
-    abstract fun create(session: T): CratePrize
+    abstract fun editorButtons(session: CompositeCratePrizeCreatorSession): List<Button>
+
+    abstract fun create(session: CompositeCratePrizeCreatorSession): CratePrize
+    abstract fun update(session: CompositeCratePrizeCreatorSession, prize: U)
 }

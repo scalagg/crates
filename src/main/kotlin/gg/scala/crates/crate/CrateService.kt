@@ -22,7 +22,13 @@ object CrateService
     @Inject
     lateinit var plugin: CratesSpigotPlugin
 
-    private val crates = mutableListOf<Crate>()
+    fun allCrates() = this.plugin.config<CrateConfig>().crates
+
+    fun findCrate(name: String) =
+        this.plugin.config<CrateConfig>().crates
+            .firstOrNull {
+                it.uniqueId == name
+            }
 
     @Configure
     fun configure()
@@ -33,10 +39,6 @@ object CrateService
                 AbstractTypeSerializer<CratePrize>()
             )
         }
-
-        this.crates.addAll(
-            this.plugin.config<CrateConfig>().crates
-        )
     }
 
     @CommandManagerCustomizer
@@ -46,7 +48,7 @@ object CrateService
             .registerContext(Crate::class.java) { context ->
                 val firstArg = context.popFirstArg()
 
-                this.crates
+                this.plugin.config<CrateConfig>().crates
                     .firstOrNull {
                         it.uniqueId == firstArg
                     }
@@ -57,7 +59,7 @@ object CrateService
 
         manager.commandCompletions
             .registerCompletion("crates") {
-                this.crates.map { it.uniqueId }
+                this.plugin.config<CrateConfig>().crates.map { it.uniqueId }
             }
     }
 }
