@@ -56,7 +56,7 @@ shadowJar {
     exclude "**/*.kotlin_builtins"
     exclude "META-INF/"
 
-    archiveFileName = "pack-loader.jar"
+    archiveFileName = "crates.jar"
 }
 
 publishing {
