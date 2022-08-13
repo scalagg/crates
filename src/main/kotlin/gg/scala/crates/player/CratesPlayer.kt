@@ -15,7 +15,7 @@ class CratesPlayer(
     override val identifier: UUID
 ) : IDataStoreObject, Savable
 {
-    val balances = mutableMapOf<UUID, Int>()
+    val balances = mutableMapOf<String, Int>()
 
     override fun save(): CompletableFuture<Void>
     {

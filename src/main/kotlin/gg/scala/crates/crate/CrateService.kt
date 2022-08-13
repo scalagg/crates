@@ -1,12 +1,16 @@
 package gg.scala.crates.crate
 
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
+import gg.scala.commons.command.ScalaCommandManager
+import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.prize.CratePrize
+import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
-import gg.scala.store.controller.DataStoreObjectControllerCache
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
-import java.util.UUID
+import net.evilblock.cubed.util.CC
 
 /**
  * @author GrowlyX
@@ -15,7 +19,10 @@ import java.util.UUID
 @Service
 object CrateService
 {
-    val crates = mutableMapOf<UUID, Crate>()
+    @Inject
+    lateinit var plugin: CratesSpigotPlugin
+
+    private val crates = mutableListOf<Crate>()
 
     @Configure
     fun configure()
@@ -27,6 +34,30 @@ object CrateService
             )
         }
 
-        DataStoreObjectControllerCache.create<Crate>()
+        this.crates.addAll(
+            this.plugin.config<CrateConfig>().crates
+        )
+    }
+
+    @CommandManagerCustomizer
+    fun customize(manager: ScalaCommandManager)
+    {
+        manager.commandContexts
+            .registerContext(Crate::class.java) { context ->
+                val firstArg = context.popFirstArg()
+
+                this.crates
+                    .firstOrNull {
+                        it.uniqueId == firstArg
+                    }
+                    ?: throw ConditionFailedException(
+                        "No crate by the name ${CC.YELLOW}$firstArg${CC.RED} exists."
+                    )
+            }
+
+        manager.commandCompletions
+            .registerCompletion("crates") {
+                this.crates.map { it.uniqueId }
+            }
     }
 }
