@@ -7,6 +7,7 @@ import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
@@ -15,7 +16,9 @@ import org.bukkit.entity.Player
  * @since 8/13/2022
  */
 class CratePrizeCompositeEditorContextMenu(
-    private val crate: Crate, private val plugin: CratesSpigotPlugin
+    private val crate: Crate,
+    private val plugin: CratesSpigotPlugin,
+    private val fallback: Menu? = null
 ) : Menu("Choose a prize type")
 {
     init
@@ -25,11 +28,22 @@ class CratePrizeCompositeEditorContextMenu(
 
     override fun size(buttons: Map<Int, Button>) = 27
 
+    override fun onClose(player: Player, manualClose: Boolean)
+    {
+        if (manualClose && fallback != null)
+        {
+            Tasks.delayed(1L)
+            {
+                fallback.openMenu(player)
+            }
+        }
+    }
+
     override fun getButtons(player: Player): Map<Int, Button>
     {
         val buttons = mutableMapOf<Int, Button>()
 
-        for (composite in CompositeCratePrizeService.composites)
+        for (composite in CompositeCratePrizeService.composites.values)
         {
             buttons[10 + buttons.size] = ItemBuilder
                 .of(Material.PAPER)

@@ -28,7 +28,9 @@ object CratesCommand : ScalaCommand()
         player.sendMessage("${CC.GRAY}Current crate key balance:")
 
         CrateService.allCrates().forEach {
-            player.sendMessage(" ${CC.AQUA}${it.displayName}: ${CC.WHITE}${(cratePlayer.balances[it.uniqueId] ?: 0).toString().format("%,.2f")}")
+            player.sendMessage(" ${CC.AQUA}${it.displayName}: ${CC.WHITE}${
+                (cratePlayer.balances[it.uniqueId] ?: 0).toString().format("%,d")
+            }")
         }
     }
 

@@ -43,13 +43,23 @@ class ItemCompositeCratePrizeEditSession(
     override var description: List<String> = listOf()
 ) : CompositeCratePrizeEditSession
 
-object ItemCompositeCratePrize : CompositeCratePrize<ItemCratePrize>()
+object ItemCompositeCratePrize : CompositeCratePrize()
 {
     override fun getName() = "Item"
     override fun createSession() = ItemCompositeCratePrizeEditSession()
 
-    override fun update(session: CompositeCratePrizeEditSession, prize: ItemCratePrize)
+    override fun createSessionFromExisting(existing: CratePrize): CompositeCratePrizeEditSession
     {
+        existing as ItemCratePrize
+
+        return ItemCompositeCratePrizeEditSession(
+            existing.internalMaterial, existing.weight, existing.rarity, existing.description
+        )
+    }
+
+    override fun update(session: CompositeCratePrizeEditSession, prize: CratePrize)
+    {
+        prize as ItemCratePrize
         session as ItemCompositeCratePrizeEditSession
 
         prize.internalMaterial = session.material

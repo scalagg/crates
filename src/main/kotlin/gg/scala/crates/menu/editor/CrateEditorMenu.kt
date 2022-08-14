@@ -46,7 +46,7 @@ class CrateEditorMenu(
     {
         val buttons = mutableMapOf<Int, Button>()
 
-        buttons[12] = ItemBuilder
+        buttons[11] = ItemBuilder
             .of(Material.SIGN)
             .name("${CC.GREEN}Display Name")
             .addToLore(
@@ -73,7 +73,7 @@ class CrateEditorMenu(
                     }
             }
 
-        buttons[14] = ItemBuilder
+        buttons[13] = ItemBuilder
             .of(Material.GRILLED_PORK)
             .name("${CC.GREEN}Manage Items")
             .addToLore(
@@ -85,7 +85,7 @@ class CrateEditorMenu(
                 player.closeInventory()
             }
 
-        buttons[16] = ItemBuilder
+        buttons[15] = ItemBuilder
             .copyOf(
                 object : AddButton()
                 {}.getButtonItem(player)
@@ -97,7 +97,7 @@ class CrateEditorMenu(
                 "${CC.YELLOW}Click to add items!"
             )
             .toButton { _, _ ->
-                CratePrizeCompositeEditorContextMenu(crate, plugin).openMenu(player)
+                CratePrizeCompositeEditorContextMenu(crate, plugin, this).openMenu(player)
             }
 
         return buttons

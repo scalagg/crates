@@ -25,9 +25,12 @@ import org.bukkit.entity.Player
  * @since 8/13/2022
  */
 class CratePrizeCompositeEditorConfigureMenu(
-    private val crate: Crate, private val plugin: CratesSpigotPlugin,
-    private val composite: CompositeCratePrize<out CratePrize>,
-    private val session: CompositeCratePrizeEditSession
+    private val crate: Crate,
+    private val plugin: CratesSpigotPlugin,
+    private val composite: CompositeCratePrize,
+    private val session: CompositeCratePrizeEditSession,
+    private val existingItem: CratePrize? = null,
+    private val fallback: Menu? = null
 ) : Menu("Configure your prize details")
 {
     init
@@ -42,10 +45,17 @@ class CratePrizeCompositeEditorConfigureMenu(
     {
         if (manualClose)
         {
+
             player.sendMessage("${CC.RED}Discarded your prize configuration.")
 
             Tasks.delayed(1L)
             {
+                if (fallback != null)
+                {
+                    fallback.openMenu(player)
+                    return@delayed
+                }
+
                 CratePrizeCompositeEditorContextMenu(crate, this.plugin).openMenu(player)
             }
         }
@@ -129,10 +139,16 @@ class CratePrizeCompositeEditorConfigureMenu(
                 "${CC.YELLOW}Click to add!",
             )
             .toButton { _, _ ->
-                val prize = this.composite
-                    .create(this.session)
+                if (this.existingItem != null)
+                {
+                    this.composite.update(this.session, this.existingItem)
+                } else
+                {
+                    val prize = this.composite
+                        .create(this.session)
 
-                this.crate.prizes.add(prize)
+                    this.crate.prizes.add(prize)
+                }
 
                 kotlin
                     .runCatching {
@@ -142,7 +158,14 @@ class CratePrizeCompositeEditorConfigureMenu(
                         it.printStackTrace()
                     }
 
-                player.closeInventory()
+                if (fallback != null)
+                {
+                    fallback.openMenu(player)
+                } else
+                {
+                    player.closeInventory()
+                }
+
                 player.sendMessage("${CC.GREEN}Added item to crate ${CC.SEC}${crate.uniqueId}${CC.GREEN}!")
             }
 
