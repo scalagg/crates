@@ -2,7 +2,6 @@ package gg.scala.crates.crate
 
 import gg.scala.commons.config.convert.annotations.ConfigConverted
 import gg.scala.commons.config.convert.annotations.ConfigFileName
-import gg.scala.commons.config.convert.annotations.ConfigLateInject
 import gg.scala.crates.crate.prize.composable.test.ItemCratePrize
 import org.bukkit.Material
 
@@ -10,7 +9,6 @@ import org.bukkit.Material
  * @author GrowlyX
  * @since 8/13/2022
  */
-@ConfigLateInject
 @ConfigConverted("dummy")
 @ConfigFileName("items.json")
 data class CrateConfig(
