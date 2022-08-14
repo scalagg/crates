@@ -13,6 +13,7 @@ import net.evilblock.cubed.menu.buttons.AddButton
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.bukkit.prompt.NumberPrompt
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
@@ -55,19 +56,33 @@ class CrateCreatorCompositeConfigureMenu(
             "General" to listOf(
                 ItemBuilder
                     .of(Material.CHEST)
-                    .name("Weight")
-                    .addToLore("${CC.GRAY}Current: ${this.session.weight}")
-                    .toButton()
+                    .name("${CC.GREEN}Prize Weight")
+                    .addToLore("${CC.GRAY}Current: ${CC.WHITE}${this.session.weight}")
+                    .toButton { _, _ ->
+                        player.sendMessage("${CC.GREEN}Enter a prize weight...")
+                        player.closeInventory()
+
+                        NumberPrompt()
+                            .acceptInput {
+                                this.session.weight = it.toDouble()
+                                player.sendMessage("${CC.SEC}Set prize weight to: ${CC.PRI}${this.session.weight}")
+
+                                this.openMenu(player)
+                            }
+                            .start(player)
+                    }
             ),
-            "Custom" to this.composite.editorButtons(this.session)
+            "Custom" to this.composite.editorButtons(this.session, this)
         )
+
+        val indexes = listOf(10, 2, 3, 1)
 
         for ((index, category) in mappings.withIndex())
         {
             buttons[(9 * (index + 1))] = ItemBuilder
                 .of(Material.STAINED_GLASS_PANE)
-                .data((5 - index).toShort())
-                .name("${CC.AQUA}$category")
+                .data((indexes[index]).toShort())
+                .name("${CC.AQUA}${category.first}")
                 .toButton()
 
             buttons[(17 + (index * 9))] = ItemBuilder
@@ -106,7 +121,7 @@ class CrateCreatorCompositeConfigureMenu(
                     }
 
                 player.closeInventory()
-                player.sendMessage("${CC.GREEN}Saved crate")
+                player.sendMessage("${CC.GREEN}Added item to crate ${CC.SEC}${crate.uniqueId}${CC.GREEN}!")
             }
 
         return buttons

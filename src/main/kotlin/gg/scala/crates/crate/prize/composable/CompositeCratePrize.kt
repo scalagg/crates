@@ -2,6 +2,7 @@ package gg.scala.crates.crate.prize.composable
 
 import gg.scala.crates.crate.prize.CratePrize
 import net.evilblock.cubed.menu.Button
+import net.evilblock.cubed.menu.Menu
 
 /**
  * @author GrowlyX
@@ -12,7 +13,7 @@ abstract class CompositeCratePrize<U : CratePrize>
     abstract fun getName(): String
     abstract fun createSession(): CompositeCratePrizeCreatorSession
 
-    abstract fun editorButtons(session: CompositeCratePrizeCreatorSession): List<Button>
+    abstract fun editorButtons(session: CompositeCratePrizeCreatorSession, menu: Menu): List<Button>
 
     abstract fun create(session: CompositeCratePrizeCreatorSession): CratePrize
     abstract fun update(session: CompositeCratePrizeCreatorSession, prize: U)

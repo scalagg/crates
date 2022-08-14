@@ -18,15 +18,25 @@ class CrateCreatorCompositeCtxMenu(
     private val crate: Crate, private val plugin: CratesSpigotPlugin
 ) : Menu("Choose a prize type")
 {
+    init
+    {
+        placeholdBorders = true
+    }
+
+    override fun size(buttons: Map<Int, Button>) = 27
+
     override fun getButtons(player: Player): Map<Int, Button>
     {
         val buttons = mutableMapOf<Int, Button>()
 
         for (composite in CompositeCratePrizeService.composites)
         {
-            buttons[buttons.size] = ItemBuilder
+            buttons[10 + buttons.size] = ItemBuilder
                 .of(Material.PAPER)
-                .name("${CC.PRI}${composite.getName()}")
+                .name("${CC.B_AQUA}${composite.getName()}")
+                .addToLore(
+                    "${CC.GRAY}Click to use this as a template."
+                )
                 .toButton { _, _ ->
                     CrateCreatorCompositeConfigureMenu(
                         crate, plugin, composite, composite.createSession()

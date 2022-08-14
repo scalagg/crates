@@ -4,6 +4,8 @@ import gg.scala.crates.crate.prize.CratePrize
 import gg.scala.crates.crate.prize.composable.CompositeCratePrize
 import gg.scala.crates.crate.prize.composable.CompositeCratePrizeCreatorSession
 import net.evilblock.cubed.menu.Button
+import net.evilblock.cubed.menu.Menu
+import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.Material
@@ -57,7 +59,7 @@ object ItemCompositeCratePrize : CompositeCratePrize<ItemCratePrize>()
     }
 
     override fun editorButtons(
-        session: CompositeCratePrizeCreatorSession
+        session: CompositeCratePrizeCreatorSession, menu: Menu
     ): List<Button>
     {
         session as ItemCompositeCratePrizeCreatorSession
@@ -65,14 +67,18 @@ object ItemCompositeCratePrize : CompositeCratePrize<ItemCratePrize>()
         return listOf(
             ItemBuilder
                 .of(Material.PAPER)
-                .name("what item")
-                .addToLore(session.material.name)
+                .name("${CC.GREEN}Item Material")
+                .addToLore("${CC.GRAY}Current: ${CC.WHITE}${session.material.name}")
                 .toButton { player, _ ->
-                    player!!.sendMessage("give")
+                    player!!.sendMessage("${CC.GREEN}Enter a material...")
+                    player.closeInventory()
 
                     InputPrompt()
                         .acceptInput { _, s ->
                             session.material = Material.valueOf(s)
+                            player.sendMessage("${CC.SEC}Set material to: ${CC.PRI}${session.material.name}")
+
+                            menu.openMenu(player)
                         }
                         .start(player)
                 }

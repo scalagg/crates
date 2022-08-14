@@ -5,11 +5,13 @@ import gg.scala.commons.scheme.impl.SinglePageSchemedMenu
 import gg.scala.crates.CratesSpigotConfig
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.CrateService
+import gg.scala.crates.player.CratesPlayerService
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
+import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -24,7 +26,7 @@ object CratesMenu
     @Inject
     lateinit var plugin: CratesSpigotPlugin
 
-    lateinit var template: AbstractCompositeSchemedMenu<Menu>
+    private lateinit var template: AbstractCompositeSchemedMenu<Menu>
 
     @Configure
     fun configure()
@@ -41,17 +43,16 @@ object CratesMenu
                     .config<CratesSpigotConfig>()
                     .menuScheme
             )
-            .map('0') { _, _ ->
+            .map('Z') { _, _ ->
                 Button.placeholder(
-                    Material.STAINED_GLASS_PANE, 4, ""
+                    Material.STAINED_GLASS_PANE, 15, ""
                 )
             }
             .map('X') { _, _ ->
                 Button.placeholder(
-                    Material.STAINED_GLASS_PANE, 1, ""
+                    Material.STAINED_GLASS_PANE, 3, ""
                 )
             }
-            .compose()
     }
 
     fun open(player: Player)
@@ -59,15 +60,35 @@ object CratesMenu
         val template = SinglePageSchemedMenu()
             .copyOf(this.template)
 
+        val cratePlayer = CratesPlayerService.find(player)
+            ?: return player.sendMessage(
+                "${CC.RED}Sorry, we weren't able to open this menu."
+            )
+
         CrateService.allCrates()
             .forEachIndexed { index, crate ->
                 template.map(
-                    "${index + 1}"[0]
+                    ('a'..'z').toList()[index]
                 ) { _, _ ->
                     ItemBuilder
                         .of(Material.CHEST)
-                        .name(crate.displayName)
-                        .toButton()
+                        .name("${CC.B_AQUA}${crate.displayName}")
+                        .addToLore(
+                            "${CC.GRAY}Current crate balance:",
+                            "${CC.WHITE}${cratePlayer.balances[crate.uniqueId] ?: 0} keys",
+                            "",
+                            "${CC.AQUA}Right-click to open crate.",
+                            "${CC.D_GRAY}Left-click to view contents.",
+                        )
+                        .toButton { _, type ->
+                            if (type!!.isRightClick)
+                            {
+
+                            } else
+                            {
+
+                            }
+                        }
                 }
             }
 
