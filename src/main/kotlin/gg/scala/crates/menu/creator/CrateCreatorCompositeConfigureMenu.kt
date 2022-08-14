@@ -3,6 +3,7 @@ package gg.scala.crates.menu.creator
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.Crate
 import gg.scala.crates.crate.CrateConfig
+import gg.scala.crates.crate.CrateService
 import gg.scala.crates.crate.prize.CratePrize
 import gg.scala.crates.crate.prize.composable.CompositeCratePrize
 import gg.scala.crates.crate.prize.composable.CompositeCratePrizeCreatorSession
@@ -28,9 +29,10 @@ class CrateCreatorCompositeConfigureMenu(
     init
     {
         updateAfterClick = true
+        placeholdBorders = true
     }
 
-    override fun size(buttons: Map<Int, Button>) = 18
+    override fun size(buttons: Map<Int, Button>) = 36
 
     override fun onClose(player: Player, manualClose: Boolean)
     {
@@ -49,32 +51,59 @@ class CrateCreatorCompositeConfigureMenu(
     {
         val buttons = mutableMapOf<Int, Button>()
 
-        buttons[buttons.size] = ItemBuilder
-            .of(Material.CHEST)
-            .name("Weight")
-            .name("${CC.GRAY}Current: ${this.session.weight}")
-            .toButton()
+        val mappings = mutableListOf(
+            "General" to listOf(
+                ItemBuilder
+                    .of(Material.CHEST)
+                    .name("Weight")
+                    .addToLore("${CC.GRAY}Current: ${this.session.weight}")
+                    .toButton()
+            ),
+            "Custom" to this.composite.editorButtons(this.session)
+        )
 
-        this.composite.editorButtons(this.session)
-            .forEach {
-                buttons[1 + buttons.size] = it
+        for ((index, category) in mappings.withIndex())
+        {
+            buttons[(9 * (index + 1))] = ItemBuilder
+                .of(Material.STAINED_GLASS_PANE)
+                .data((5 - index).toShort())
+                .name("${CC.AQUA}$category")
+                .toButton()
+
+            buttons[(17 + (index * 9))] = ItemBuilder
+                .of(Material.AIR)
+                .toButton()
+
+            for ((buttonIndex, button) in category.second.withIndex())
+            {
+                buttons[buttonIndex + (10 + (index * 9))] = button
             }
+        }
 
-        buttons[14] = ItemBuilder
+        buttons[4] = ItemBuilder
             .copyOf(
                 object : AddButton()
                 {}.getButtonItem(player)
             )
-            .name("add")
+            .name("${CC.B_GREEN}Click to add item")
+            .addToLore(
+                "${CC.GRAY}Add item to crate!",
+                "",
+                "${CC.GREEN}Click to add!",
+            )
             .toButton { _, _ ->
                 val prize = this.composite
                     .create(this.session)
 
                 this.crate.prizes.add(prize)
 
-                this.plugin.configContainerized
-                    .container<CrateConfig>()
-                    .save(crossSync = false)
+                kotlin
+                    .runCatching {
+                        CrateService.saveConfig()
+                    }
+                    .onFailure {
+                        it.printStackTrace()
+                    }
 
                 player.closeInventory()
                 player.sendMessage("${CC.GREEN}Saved crate")

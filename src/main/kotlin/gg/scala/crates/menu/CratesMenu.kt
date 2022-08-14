@@ -24,7 +24,7 @@ object CratesMenu
     @Inject
     lateinit var plugin: CratesSpigotPlugin
 
-    private lateinit var template: AbstractCompositeSchemedMenu<Menu>
+    lateinit var template: AbstractCompositeSchemedMenu<Menu>
 
     @Configure
     fun configure()

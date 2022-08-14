@@ -9,11 +9,18 @@ import java.util.function.UnaryOperator
  * @author GrowlyX
  * @since 8/13/2022
  */
-interface CratePrize : AbstractTypeSerializable, UnaryOperator<Player>, Weighted
+abstract class CratePrize(
+    private val name: String,
+    var weightInternal: Double,
+    private val description: List<String>,
+    private val rarity: CratePrizeRarity = CratePrizeRarity.Common
+) : UnaryOperator<Player>, Weighted, AbstractTypeSerializable
 {
-    fun getName(): String
-    fun getDescription(): List<String>
+    fun getName() = this.name
+    fun getDescription() = this.description
 
-    fun getRarity(): CratePrizeRarity
-    fun applicableTo(player: Player): Boolean
+    fun getRarity() = this.rarity
+
+    override fun getWeight() = this.weightInternal
+    abstract fun applicableTo(player: Player): Boolean
 }

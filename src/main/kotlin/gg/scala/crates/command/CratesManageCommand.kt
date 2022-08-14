@@ -2,6 +2,7 @@ package gg.scala.crates.command
 
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandCompletion
 import gg.scala.commons.acf.annotation.CommandPermission
 import gg.scala.commons.acf.annotation.Default
 import gg.scala.commons.acf.annotation.HelpCommand
@@ -34,6 +35,7 @@ object CratesManageCommand : ScalaCommand()
     }
 
     @Subcommand("add-item")
+    @CommandCompletion("@crates")
     fun onAddItem(player: Player, crate: Crate)
     {
         CrateCreatorCompositeCtxMenu(crate, this.plugin).openMenu(player)

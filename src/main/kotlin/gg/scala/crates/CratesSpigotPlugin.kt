@@ -2,6 +2,7 @@ package gg.scala.crates
 
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.annotations.container.ContainerEnable
+import gg.scala.commons.config.annotations.ContainerConfig
 import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 
@@ -16,6 +17,10 @@ import me.lucko.helper.plugin.ap.PluginDependency
         PluginDependency("store-spigot"),
         PluginDependency("Lemon")
     ]
+)
+@ContainerConfig(
+    value = "config",
+    model = CratesSpigotConfig::class
 )
 class CratesSpigotPlugin : ExtendedScalaPlugin()
 {
