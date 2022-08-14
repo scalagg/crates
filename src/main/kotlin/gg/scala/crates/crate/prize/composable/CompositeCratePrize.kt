@@ -11,10 +11,10 @@ import net.evilblock.cubed.menu.Menu
 abstract class CompositeCratePrize<U : CratePrize>
 {
     abstract fun getName(): String
-    abstract fun createSession(): CompositeCratePrizeCreatorSession
+    abstract fun createSession(): CompositeCratePrizeEditSession
 
-    abstract fun editorButtons(session: CompositeCratePrizeCreatorSession, menu: Menu): List<Button>
+    abstract fun editorButtons(session: CompositeCratePrizeEditSession, menu: Menu): List<Button>
 
-    abstract fun create(session: CompositeCratePrizeCreatorSession): CratePrize
-    abstract fun update(session: CompositeCratePrizeCreatorSession, prize: U)
+    abstract fun create(session: CompositeCratePrizeEditSession): CratePrize
+    abstract fun update(session: CompositeCratePrizeEditSession, prize: U)
 }

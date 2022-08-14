@@ -15,7 +15,8 @@ import me.lucko.helper.plugin.ap.PluginDependency
     depends = [
         PluginDependency("scala-commons"),
         PluginDependency("store-spigot"),
-        PluginDependency("Lemon")
+        PluginDependency("Lemon"),
+        PluginDependency("Cookie"),
     ]
 )
 @ContainerConfig(

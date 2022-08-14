@@ -8,6 +8,6 @@ import gg.scala.crates.crate.prize.CratePrize
  */
 class Crate(
     val uniqueId: String,
-    val displayName: String,
+    var displayName: String,
     val prizes: MutableList<CratePrize>
 )

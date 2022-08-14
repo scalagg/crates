@@ -6,7 +6,7 @@ import gg.scala.commons.acf.annotation.Subcommand
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.crates.crate.CrateService
-import gg.scala.crates.menu.CratesMenu
+import gg.scala.crates.menu.CrateMenu
 import gg.scala.crates.player.CratesPlayerService
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
@@ -28,13 +28,13 @@ object CratesCommand : ScalaCommand()
         player.sendMessage("${CC.GRAY}Current crate key balance:")
 
         CrateService.allCrates().forEach {
-            player.sendMessage(" ${CC.AQUA}${it.displayName}: ${CC.WHITE}${cratePlayer.balances[it.uniqueId] ?: 0}")
+            player.sendMessage(" ${CC.AQUA}${it.displayName}: ${CC.WHITE}${(cratePlayer.balances[it.uniqueId] ?: 0).toString().format("%,.2f")}")
         }
     }
 
     @Subcommand("menu")
     fun onMenu(player: Player)
     {
-        CratesMenu.open(player)
+        CrateMenu.open(player)
     }
 }

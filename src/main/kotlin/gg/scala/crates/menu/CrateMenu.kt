@@ -21,7 +21,7 @@ import org.bukkit.entity.Player
  * @since 8/13/2022
  */
 @Service
-object CratesMenu
+object CrateMenu
 {
     @Inject
     lateinit var plugin: CratesSpigotPlugin
@@ -83,10 +83,10 @@ object CratesMenu
                         .toButton { _, type ->
                             if (type!!.isRightClick)
                             {
-
+                                player.sendMessage("open the crate")
                             } else
                             {
-
+                                CrateContentsMenu(crate).openMenu(player)
                             }
                         }
                 }

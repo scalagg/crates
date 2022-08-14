@@ -12,7 +12,8 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.Crate
-import gg.scala.crates.menu.creator.CrateCreatorCompositeCtxMenu
+import gg.scala.crates.menu.editor.CrateEditorViewMenu
+import gg.scala.crates.menu.editor.prize.CratePrizeCompositeEditorContextMenu
 import gg.scala.crates.player.CratesPlayerService
 import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.player.LemonPlayer
@@ -24,7 +25,7 @@ import org.bukkit.entity.Player
  * @since 8/13/2022
  */
 @AutoRegister
-@CommandAlias("crates-manage")
+@CommandAlias("crates-manage|cm|cratesadmin")
 @CommandPermission("crates.command.manage")
 object CratesManageCommand : ScalaCommand()
 {
@@ -51,10 +52,9 @@ object CratesManageCommand : ScalaCommand()
         player.sendMessage("${CC.SEC}Gave ${target.getColoredName()}${CC.SEC} ${CC.PRI}$amount${CC.SEC} crate keys.")
     }
 
-    @Subcommand("add-item")
-    @CommandCompletion("@crates")
-    fun onAddItem(player: Player, crate: Crate)
+    @Subcommand("control-panel")
+    fun onControlPanel(player: Player)
     {
-        CrateCreatorCompositeCtxMenu(crate, this.plugin).openMenu(player)
+        CrateEditorViewMenu(this.plugin).openMenu(player)
     }
 }

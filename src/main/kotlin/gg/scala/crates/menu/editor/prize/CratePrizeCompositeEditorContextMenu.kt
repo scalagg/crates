@@ -1,4 +1,4 @@
-package gg.scala.crates.menu.creator
+package gg.scala.crates.menu.editor.prize
 
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.Crate
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 8/13/2022
  */
-class CrateCreatorCompositeCtxMenu(
+class CratePrizeCompositeEditorContextMenu(
     private val crate: Crate, private val plugin: CratesSpigotPlugin
 ) : Menu("Choose a prize type")
 {
@@ -38,7 +38,7 @@ class CrateCreatorCompositeCtxMenu(
                     "${CC.GRAY}Click to use this as a template."
                 )
                 .toButton { _, _ ->
-                    CrateCreatorCompositeConfigureMenu(
+                    CratePrizeCompositeEditorConfigureMenu(
                         crate, plugin, composite, composite.createSession()
                     ).openMenu(player)
                 }

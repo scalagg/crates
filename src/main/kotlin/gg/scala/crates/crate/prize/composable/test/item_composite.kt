@@ -1,8 +1,9 @@
 package gg.scala.crates.crate.prize.composable.test
 
 import gg.scala.crates.crate.prize.CratePrize
+import gg.scala.crates.crate.prize.CratePrizeRarity
 import gg.scala.crates.crate.prize.composable.CompositeCratePrize
-import gg.scala.crates.crate.prize.composable.CompositeCratePrizeCreatorSession
+import gg.scala.crates.crate.prize.composable.CompositeCratePrizeEditSession
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
@@ -17,10 +18,12 @@ import org.bukkit.inventory.ItemStack
  * @since 8/13/2022
  */
 class ItemCratePrize(
-    var material: Material,
-    weight: Double
+    var internalMaterial: Material,
+    weight: Double,
+    rarity: CratePrizeRarity,
+    description: List<String>
 ) : CratePrize(
-    "Item", weight, listOf()
+    "Item", Material.WOOD, weight, description, rarity
 )
 {
     override fun getAbstractType() = ItemCratePrize::class.java
@@ -33,36 +36,40 @@ class ItemCratePrize(
     }
 }
 
-class ItemCompositeCratePrizeCreatorSession(
+class ItemCompositeCratePrizeEditSession(
     var material: Material = Material.ACACIA_DOOR,
-    override var weight: Double = 100.0
-) : CompositeCratePrizeCreatorSession
+    override var weight: Double = 100.0,
+    override var rarity: CratePrizeRarity = CratePrizeRarity.Common,
+    override var description: List<String> = listOf()
+) : CompositeCratePrizeEditSession
 
 object ItemCompositeCratePrize : CompositeCratePrize<ItemCratePrize>()
 {
     override fun getName() = "Item"
-    override fun createSession() = ItemCompositeCratePrizeCreatorSession()
+    override fun createSession() = ItemCompositeCratePrizeEditSession()
 
-    override fun update(session: CompositeCratePrizeCreatorSession, prize: ItemCratePrize)
+    override fun update(session: CompositeCratePrizeEditSession, prize: ItemCratePrize)
     {
-        session as ItemCompositeCratePrizeCreatorSession
+        session as ItemCompositeCratePrizeEditSession
 
-        prize.material = session.material
+        prize.internalMaterial = session.material
         prize.weightInternal = session.weight
+        prize.rarity = session.rarity
+        prize.description = session.description
     }
 
-    override fun create(session: CompositeCratePrizeCreatorSession): CratePrize
+    override fun create(session: CompositeCratePrizeEditSession): CratePrize
     {
-        session as ItemCompositeCratePrizeCreatorSession
+        session as ItemCompositeCratePrizeEditSession
 
-        return ItemCratePrize(session.material, session.weight)
+        return ItemCratePrize(session.material, session.weight, session.rarity, session.description)
     }
 
     override fun editorButtons(
-        session: CompositeCratePrizeCreatorSession, menu: Menu
+        session: CompositeCratePrizeEditSession, menu: Menu
     ): List<Button>
     {
-        session as ItemCompositeCratePrizeCreatorSession
+        session as ItemCompositeCratePrizeEditSession
 
         return listOf(
             ItemBuilder
