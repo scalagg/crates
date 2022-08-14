@@ -39,6 +39,8 @@ object CrateService
                 AbstractTypeSerializer<CratePrize>()
             )
         }
+
+        this.plugin.config<CrateConfig>()
     }
 
     @CommandManagerCustomizer
