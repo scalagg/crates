@@ -1,6 +1,7 @@
 package gg.scala.crates
 
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.commons.annotations.container.ContainerEnable
 import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 
@@ -18,4 +19,12 @@ import me.lucko.helper.plugin.ap.PluginDependency
 )
 class CratesSpigotPlugin : ExtendedScalaPlugin()
 {
+    @ContainerEnable
+    fun containerEnable()
+    {
+        if (!this.dataFolder.exists())
+        {
+            this.dataFolder.mkdirs()
+        }
+    }
 }
