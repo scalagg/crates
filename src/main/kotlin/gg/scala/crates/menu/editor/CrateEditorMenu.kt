@@ -71,6 +71,7 @@ class CrateEditorMenu(
                             "${CC.SEC}Set new display name: ${CC.PRI}${this.crate.displayName}"
                         )
                     }
+                    .start(player)
             }
 
         buttons[13] = ItemBuilder
@@ -82,7 +83,7 @@ class CrateEditorMenu(
                 "${CC.YELLOW}Click to manage!"
             )
             .toButton { _, _ ->
-                player.closeInventory()
+                CrateEditorContentsMenu(crate, plugin).openMenu(player)
             }
 
         buttons[15] = ItemBuilder

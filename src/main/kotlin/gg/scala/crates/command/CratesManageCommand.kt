@@ -12,6 +12,7 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.Crate
+import gg.scala.crates.crate.CrateService
 import gg.scala.crates.menu.editor.CrateEditorViewMenu
 import gg.scala.crates.menu.editor.prize.CratePrizeCompositeEditorContextMenu
 import gg.scala.crates.player.CratesPlayerService
@@ -56,5 +57,13 @@ object CratesManageCommand : ScalaCommand()
     fun onControlPanel(player: Player)
     {
         CrateEditorViewMenu(this.plugin).openMenu(player)
+    }
+
+    @Subcommand("reload-config")
+    fun onConfigReload(player: Player)
+    {
+        CrateService.loadConfig()
+
+        player.sendMessage("${CC.GREEN}Reloaded config.")
     }
 }

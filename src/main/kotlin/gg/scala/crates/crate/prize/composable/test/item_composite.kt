@@ -23,16 +23,16 @@ class ItemCratePrize(
     rarity: CratePrizeRarity,
     description: List<String>
 ) : CratePrize(
-    "Item", Material.WOOD, weight, description, rarity
+    "Item", internalMaterial, weight, description, rarity
 )
 {
     override fun getAbstractType() = ItemCratePrize::class.java
     override fun applicableTo(player: Player) = true
 
-    override fun apply(t: Player): Player
+    override fun apply(player: Player): Player
     {
-        t.inventory.addItem(ItemStack(material))
-        return t
+        player.inventory.addItem(ItemStack(material))
+        return player
     }
 }
 

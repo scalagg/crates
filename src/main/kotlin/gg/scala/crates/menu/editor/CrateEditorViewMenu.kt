@@ -5,9 +5,11 @@ import gg.scala.crates.crate.Crate
 import gg.scala.crates.crate.CrateService
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.buttons.AddButton
+import net.evilblock.cubed.menu.menus.ConfirmMenu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -102,9 +104,36 @@ class CrateEditorViewMenu(
                         "",
                         "${CC.GRAY}Crate prizes: ${CC.WHITE}${it.prizes.size} prizes",
                         "",
-                        "${CC.GREEN}Click to edit crate!"
+                        "${CC.GREEN}Click to edit crate!",
+                        "${CC.RED}Right-Click to delete crate!",
                     )
-                    .toButton { _, _ ->
+                    .toButton { _, type ->
+                        if (type!!.isRightClick)
+                        {
+                            ConfirmMenu(confirm = true) { option ->
+                                if (!option)
+                                {
+                                    player.sendMessage("${CC.RED}Didn't delete crate.")
+
+                                    Tasks.delayed(1L)
+                                    {
+                                        openMenu(player)
+                                    }
+                                    return@ConfirmMenu
+                                }
+
+                                CrateService.allCrates()
+                                    .removeIf { crate ->
+                                        it.uniqueId == crate.uniqueId
+                                    }
+
+                                CrateService.saveConfig()
+
+                                player.sendMessage("${CC.RED}Deleted crate.")
+                            }.openMenu(player)
+                            return@toButton
+                        }
+
                         CrateEditorMenu(it, plugin).openMenu(player)
                     }
             }

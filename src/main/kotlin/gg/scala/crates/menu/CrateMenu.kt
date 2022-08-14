@@ -45,12 +45,12 @@ object CrateMenu
             )
             .map('Z') { _, _ ->
                 Button.placeholder(
-                    Material.STAINED_GLASS_PANE, 15, ""
+                    Material.STAINED_GLASS_PANE, 15, " "
                 )
             }
             .map('X') { _, _ ->
                 Button.placeholder(
-                    Material.STAINED_GLASS_PANE, 3, ""
+                    Material.STAINED_GLASS_PANE, 3, " "
                 )
             }
     }
@@ -83,7 +83,7 @@ object CrateMenu
                         .toButton { _, type ->
                             if (type!!.isRightClick)
                             {
-                                player.sendMessage("open the crate")
+                                CrateService.openCrate(player, crate)
                             } else
                             {
                                 CrateContentsMenu(crate).openMenu(player)

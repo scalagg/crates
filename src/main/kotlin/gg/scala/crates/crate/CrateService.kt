@@ -6,12 +6,15 @@ import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.commons.util.Files
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.prize.CratePrize
+import gg.scala.crates.feature.CrateOpenMenu
+import gg.scala.crates.player.CratesPlayerService
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.util.CC
+import org.bukkit.entity.Player
 import java.io.File
 
 /**
@@ -34,6 +37,27 @@ object CrateService
             .firstOrNull {
                 it.uniqueId == name
             }
+
+    fun openCrate(player: Player, crate: Crate)
+    {
+        val cratePlayer = CratesPlayerService.find(player)
+            ?: return kotlin.run {
+                player.sendMessage("${CC.RED}Sorry, something went wrong.")
+            }
+
+        val balance = cratePlayer.balances[crate.uniqueId]
+
+        if (balance == null || balance <= 0)
+        {
+            player.sendMessage("${CC.RED}You do not have a key for this crate!")
+            return
+        }
+
+        cratePlayer.balances[crate.uniqueId] = balance - 1
+        cratePlayer.save()
+
+        CrateOpenMenu(player, crate).openMenu(player)
+    }
 
     @Configure
     fun configure()

@@ -64,5 +64,5 @@ class CrateContentsMenu(
         return buttons
     }
 
-    override fun getPrePaginatedTitle(player: Player) = "Viewing crate ${crate.displayName}..."
+    override fun getPrePaginatedTitle(player: Player) = "Viewing crate ${crate.displayName}${CC.D_GRAY}..."
 }
