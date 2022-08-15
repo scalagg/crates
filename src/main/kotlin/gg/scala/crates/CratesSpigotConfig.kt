@@ -11,9 +11,9 @@ class CratesSpigotConfig
 {
     @Comment("The /crates menu layout mapping.")
     val menuScheme = arrayOf(
-        "0X00X00X0",
-        "X1XX0XX0X",
-        "0X00X00X0"
+        "ZXZZXZZXZ",
+        "XaXXZXXZX",
+        "ZXZZXZZXZ"
     )
 
     val displayCratesBalanceOnCratesDefaultCommand = true
