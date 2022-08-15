@@ -8,6 +8,7 @@ import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 
 /**
@@ -66,14 +67,17 @@ class CrateOpenMenu(
             }
 
             prize.apply(player)
-            player.sendMessage("${CC.GREEN}You won: ${CC.SEC}${prize.name}${CC.GREEN}!")
 
+            player.sendMessage("${CC.GREEN}You won: ${CC.SEC}${prize.name}${CC.GREEN}!")
+            player.playSound(player.location, Sound.FIREWORK_LAUNCH, 1.0F, 1.0F)
             player.closeInventory()
         } else
         {
             // shift last to first, pushes everything else forward
             val last = this.applicable.removeLast()
             this.applicable.add(0, last)
+
+            player.playSound(player.location, Sound.WOOD_CLICK, 1.0F, 1.0F)
         }
 
         // add items in the current index to the button map
