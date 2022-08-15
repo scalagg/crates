@@ -27,13 +27,16 @@ class CrateOpenMenu(
 
     init
     {
-        autoUpdateInterval = 50L
+        autoUpdateInterval = 10L
+
         placeholdBorders = true
         autoUpdate = true
 
+        val endChoice = (1000L..1100L).random()
+
         Schedulers.sync()
             .runRepeating({ task ->
-                if (autoUpdateInterval >= 1000L || manuallyClosed)
+                if (autoUpdateInterval >= endChoice || manuallyClosed)
                 {
                     crateRollStopped = true
                     task.closeSilently()
@@ -46,6 +49,7 @@ class CrateOpenMenu(
 
     private val applicable = this.crate.prizes
         .sortedBy { it.weight }
+        .shuffled()
         .filter {
             it.applicableTo(this.player)
         }
