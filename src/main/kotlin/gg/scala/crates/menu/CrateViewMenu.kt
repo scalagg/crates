@@ -21,7 +21,7 @@ import org.bukkit.entity.Player
  * @since 8/13/2022
  */
 @Service
-object CrateMenu
+object CrateViewMenu
 {
     @Inject
     lateinit var plugin: CratesSpigotPlugin

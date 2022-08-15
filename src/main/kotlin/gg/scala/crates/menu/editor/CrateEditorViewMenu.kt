@@ -1,8 +1,10 @@
 package gg.scala.crates.menu.editor
 
 import gg.scala.crates.CratesSpigotPlugin
+import gg.scala.crates.configuration
 import gg.scala.crates.crate.Crate
 import gg.scala.crates.crate.CrateService
+import gg.scala.crates.sendToPlayer
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.buttons.AddButton
 import net.evilblock.cubed.menu.menus.ConfirmMenu
@@ -76,11 +78,12 @@ class CrateEditorViewMenu(
                                 CrateService.saveConfig()
                             }
                             .onSuccess {
-                                player.sendMessage("${CC.GREEN}Successfully created a new crate!")
+                                configuration.crateCreated.sendToPlayer(player)
                                 openMenu(player)
                             }
                             .onFailure {
-                                player.sendMessage("${CC.RED}Something went terribly wrong while trying to create a crate.")
+                                it.printStackTrace()
+                                configuration.internalError.sendToPlayer(player)
                             }
                     }
                     .start(player)
@@ -113,7 +116,7 @@ class CrateEditorViewMenu(
                             ConfirmMenu(confirm = true) { option ->
                                 if (!option)
                                 {
-                                    player.sendMessage("${CC.RED}Didn't delete crate.")
+                                    configuration.crateDeletionQuit.sendToPlayer(player)
 
                                     Tasks.delayed(1L)
                                     {
@@ -129,7 +132,7 @@ class CrateEditorViewMenu(
 
                                 CrateService.saveConfig()
 
-                                player.sendMessage("${CC.RED}Deleted crate.")
+                                configuration.crateDeletionSuccess.sendToPlayer(player)
                             }.openMenu(player)
                             return@toButton
                         }

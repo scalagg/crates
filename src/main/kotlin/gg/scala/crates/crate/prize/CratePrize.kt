@@ -11,10 +11,10 @@ import java.util.function.UnaryOperator
  * @since 8/13/2022
  */
 abstract class CratePrize(
-    val name: String,
+    var name: String,
     val material: Material,
     var weightInternal: Double,
-    var description: List<String>,
+    var description: MutableList<String>,
     var rarity: CratePrizeRarity = CratePrizeRarity.Common
 ) : UnaryOperator<Player>, Weighted, AbstractTypeSerializable
 {

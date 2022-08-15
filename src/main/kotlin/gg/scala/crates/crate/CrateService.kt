@@ -5,9 +5,11 @@ import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.commons.util.Files
 import gg.scala.crates.CratesSpigotPlugin
+import gg.scala.crates.configuration
 import gg.scala.crates.crate.prize.CratePrize
-import gg.scala.crates.feature.CrateOpenMenu
+import gg.scala.crates.menu.CrateOpenMenu
 import gg.scala.crates.player.CratesPlayerService
+import gg.scala.crates.sendToPlayer
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -42,14 +44,14 @@ object CrateService
     {
         val cratePlayer = CratesPlayerService.find(player)
             ?: return kotlin.run {
-                player.sendMessage("${CC.RED}Sorry, something went wrong.")
+                configuration.internalError.sendToPlayer(player)
             }
 
         val balance = cratePlayer.balances[crate.uniqueId]
 
         if (balance == null || balance <= 0)
         {
-            player.sendMessage("${CC.RED}You do not have a key for this crate!")
+            configuration.noKeyOpenAttempt.sendToPlayer(player)
             return
         }
 

@@ -18,12 +18,13 @@ import org.bukkit.inventory.ItemStack
  * @since 8/13/2022
  */
 class ItemCratePrize(
+    name: String,
     var internalMaterial: Material,
     weight: Double,
     rarity: CratePrizeRarity,
-    description: List<String>
+    description: MutableList<String>
 ) : CratePrize(
-    "Item", internalMaterial, weight, description, rarity
+    name, internalMaterial, weight, description, rarity
 )
 {
     override fun getAbstractType() = ItemCratePrize::class.java
@@ -37,10 +38,11 @@ class ItemCratePrize(
 }
 
 class ItemCompositeCratePrizeEditSession(
+    override var name: String = "some item",
     var material: Material = Material.ACACIA_DOOR,
     override var weight: Double = 100.0,
     override var rarity: CratePrizeRarity = CratePrizeRarity.Common,
-    override var description: List<String> = listOf()
+    override var description: MutableList<String> = mutableListOf()
 ) : CompositeCratePrizeEditSession
 
 object ItemCompositeCratePrize : CompositeCratePrize()
@@ -53,7 +55,8 @@ object ItemCompositeCratePrize : CompositeCratePrize()
         existing as ItemCratePrize
 
         return ItemCompositeCratePrizeEditSession(
-            existing.internalMaterial, existing.weight, existing.rarity, existing.description
+            existing.name, existing.internalMaterial,
+            existing.weight, existing.rarity, existing.description
         )
     }
 
@@ -62,6 +65,7 @@ object ItemCompositeCratePrize : CompositeCratePrize()
         prize as ItemCratePrize
         session as ItemCompositeCratePrizeEditSession
 
+        prize.name = session.name
         prize.internalMaterial = session.material
         prize.weightInternal = session.weight
         prize.rarity = session.rarity
@@ -72,7 +76,11 @@ object ItemCompositeCratePrize : CompositeCratePrize()
     {
         session as ItemCompositeCratePrizeEditSession
 
-        return ItemCratePrize(session.material, session.weight, session.rarity, session.description)
+        return ItemCratePrize(
+            session.name, session.material,
+            session.weight, session.rarity,
+            session.description
+        )
     }
 
     override fun editorButtons(

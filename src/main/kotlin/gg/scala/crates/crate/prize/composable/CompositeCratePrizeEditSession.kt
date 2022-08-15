@@ -8,7 +8,8 @@ import gg.scala.crates.crate.prize.CratePrizeRarity
  */
 interface CompositeCratePrizeEditSession
 {
+    var name: String
     var weight: Double
     var rarity: CratePrizeRarity
-    var description: List<String>
+    var description: MutableList<String>
 }

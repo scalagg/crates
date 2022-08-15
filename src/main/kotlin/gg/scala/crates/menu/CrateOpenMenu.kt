@@ -1,4 +1,4 @@
-package gg.scala.crates.feature
+package gg.scala.crates.menu
 
 import gg.scala.crates.crate.Crate
 import gg.scala.crates.player.CratesPlayerService
@@ -43,6 +43,7 @@ class CrateOpenMenu(
     }
 
     private val applicable = this.crate.prizes
+        .sortedBy { it.weight }
         .filter {
             it.applicableTo(this.player)
         }
@@ -77,7 +78,7 @@ class CrateOpenMenu(
             val last = this.applicable.removeLast()
             this.applicable.add(0, last)
 
-            player.playSound(player.location, Sound.WOOD_CLICK, 1.0F, 1.0F)
+            player.playSound(player.location, Sound.CLICK, 1.0F, 1.0F)
         }
 
         // add items in the current index to the button map
@@ -118,6 +119,12 @@ class CrateOpenMenu(
         if (manualClose && !this.crateRollStopped)
         {
             this.manuallyClosed = true
+
+            if (this.autoUpdateInterval >= 900)
+            {
+                player.sendMessage("${CC.RED}You were not refunded your crate key as you closed the menu too late into roll.")
+                return
+            }
 
             player.sendMessage("${CC.RED}We are refunding your crate key as you closed the menu.")
             this.refundCrateKey(player)

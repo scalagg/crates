@@ -13,9 +13,12 @@ import gg.scala.lemon.player.metadata.Metadata
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.menu.buttons.AddButton
+import net.evilblock.cubed.menu.menus.TextEditorMenu
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import net.evilblock.cubed.util.bukkit.prompt.NumberPrompt
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -67,6 +70,49 @@ class CratePrizeCompositeEditorConfigureMenu(
 
         val mappings = mutableListOf(
             "General" to listOf(
+                ItemBuilder
+                    .of(Material.PAPER)
+                    .name("${CC.GREEN}Prize Name")
+                    .addToLore("${CC.GRAY}Current: ${CC.WHITE}${this.session.name}")
+                    .toButton { _, _ ->
+                        player.closeInventory()
+
+                        InputPrompt()
+                            .withText("${CC.GREEN}Enter a prize weight...")
+                            .acceptInput { _, text ->
+                                this.session.name = Color.translate(text)
+                                player.sendMessage("${CC.SEC}Set prize name to: ${CC.PRI}${this.session.name}")
+
+                                this.openMenu(player)
+                            }
+                            .start(player)
+                    },
+                ItemBuilder
+                    .of(Material.SIGN)
+                    .name("${CC.GREEN}Prize Description")
+                    .addToLore("${CC.GRAY}Current:")
+                    .apply {
+                        addToLore(*session.description.toTypedArray())
+                    }
+                    .toButton { _, _ ->
+                        object : TextEditorMenu(session.description)
+                        {
+                            override fun getPrePaginatedTitle(player: Player) = "Edit prize description..."
+
+                            override fun onClose(player: Player)
+                            {
+                                this@CratePrizeCompositeEditorConfigureMenu.openMenu(player)
+                            }
+
+                            override fun onSave(player: Player, list: List<String>)
+                            {
+                                session.description.clear()
+                                session.description.addAll(list)
+
+                                player.sendMessage("${CC.GREEN}Saved changes to description!")
+                            }
+                        }.openMenu(player)
+                    },
                 ItemBuilder
                     .of(Material.CHEST)
                     .name("${CC.GREEN}Prize Weight")
@@ -166,7 +212,7 @@ class CratePrizeCompositeEditorConfigureMenu(
                     player.closeInventory()
                 }
 
-                player.sendMessage("${CC.GREEN}Added item to crate ${CC.SEC}${crate.uniqueId}${CC.GREEN}!")
+                player.sendMessage("${CC.GREEN}Added/updated item to crate ${CC.SEC}${crate.uniqueId}${CC.GREEN}!")
             }
 
         return buttons

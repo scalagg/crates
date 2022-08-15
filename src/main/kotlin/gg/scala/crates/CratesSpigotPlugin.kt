@@ -28,6 +28,8 @@ class CratesSpigotPlugin : ExtendedScalaPlugin()
     @ContainerEnable
     fun containerEnable()
     {
+        configuration = this.config()
+
         if (!this.dataFolder.exists())
         {
             this.dataFolder.mkdirs()

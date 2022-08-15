@@ -2,7 +2,6 @@ package gg.scala.crates.menu
 
 import gg.scala.crates.crate.Crate
 import net.evilblock.cubed.menu.Button
-import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
@@ -37,7 +36,7 @@ class CrateContentsMenu(
         {
             Tasks.delayed(1L)
             {
-                CrateMenu.open(player)
+                CrateViewMenu.open(player)
             }
         }
     }

@@ -11,8 +11,13 @@ import org.bukkit.Material
 data class CrateConfig(
     val crates: MutableList<Crate> = mutableListOf(
         Crate("testing", "heya", mutableListOf(
-            ItemCratePrize(Material.ACACIA_DOOR, 100.0, CratePrizeRarity.Common, listOf()),
-            ItemCratePrize(Material.WOOD, 25.0, CratePrizeRarity.Legendary, listOf())
+            ItemCratePrize("Door", Material.ACACIA_DOOR, 100.0, CratePrizeRarity.Common, mutableListOf()),
+            ItemCratePrize("Star", Material.NETHER_STAR, 100.0, CratePrizeRarity.Common, mutableListOf()),
+            ItemCratePrize("Rack", Material.NETHERRACK, 100.0, CratePrizeRarity.Common, mutableListOf()),
+            ItemCratePrize("Brick", Material.BRICK, 100.0, CratePrizeRarity.Common, mutableListOf()),
+            ItemCratePrize("Boots", Material.CHAINMAIL_BOOTS, 100.0, CratePrizeRarity.Common, mutableListOf()),
+            ItemCratePrize("Minecrat", Material.MINECART, 100.0, CratePrizeRarity.Common, mutableListOf()),
+            ItemCratePrize("Hoper", Material.HOPPER, 100.0, CratePrizeRarity.Common, mutableListOf())
         ))
     )
 )
