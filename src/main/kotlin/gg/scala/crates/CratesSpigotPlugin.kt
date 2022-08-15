@@ -17,6 +17,7 @@ import me.lucko.helper.plugin.ap.PluginDependency
         PluginDependency("store-spigot"),
         PluginDependency("Lemon"),
         PluginDependency("Cookie"),
+        PluginDependency("cloudsync", soft = true)
     ]
 )
 @ContainerConfig(

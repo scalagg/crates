@@ -1,7 +1,9 @@
 package gg.scala.crates.menu
 
+import gg.scala.crates.configuration
 import gg.scala.crates.crate.Crate
 import gg.scala.crates.player.CratesPlayerService
+import gg.scala.crates.sendToPlayer
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
@@ -60,7 +62,7 @@ class CrateOpenMenu(
 
             if (prize == null)
             {
-                player.sendMessage("${CC.RED}You did not win anything! Your key was refunded.")
+                configuration.crateWinFailure.sendToPlayer(player)
                 player.closeInventory()
 
                 refundCrateKey(player)
@@ -69,7 +71,10 @@ class CrateOpenMenu(
 
             prize.apply(player)
 
-            player.sendMessage("${CC.GREEN}You won: ${CC.SEC}${prize.name}${CC.GREEN}!")
+            configuration.crateWin.sendToPlayer(
+                player, "<cratePrizeName>" to prize.name
+            )
+
             player.playSound(player.location, Sound.FIREWORK_LAUNCH, 1.0F, 1.0F)
             player.closeInventory()
         } else
@@ -122,11 +127,11 @@ class CrateOpenMenu(
 
             if (this.autoUpdateInterval >= 900)
             {
-                player.sendMessage("${CC.RED}You were not refunded your crate key as you closed the menu too late into roll.")
+                configuration.crateWinRefundFailure.sendToPlayer(player)
                 return
             }
 
-            player.sendMessage("${CC.RED}We are refunding your crate key as you closed the menu.")
+            configuration.crateWinRefundSuccess.sendToPlayer(player)
             this.refundCrateKey(player)
         }
     }
@@ -135,7 +140,7 @@ class CrateOpenMenu(
     {
         val cratePlayer = CratesPlayerService.find(player)
             ?: return kotlin.run {
-                player.sendMessage("${CC.RED}We were unable to refund your crate key. Please contact administration!")
+                configuration.crateWinRefundFailureInternal.sendToPlayer(player)
             }
 
         cratePlayer.balances[crate.uniqueId] =

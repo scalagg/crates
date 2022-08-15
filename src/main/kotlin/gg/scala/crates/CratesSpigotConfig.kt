@@ -9,12 +9,14 @@ import xyz.mkotb.configapi.comment.Comment
  */
 class CratesSpigotConfig
 {
-    @Comment("The menu scheme.")
+    @Comment("The /crates menu layout mapping.")
     val menuScheme = arrayOf(
         "0X00X00X0",
         "X1XX0XX0X",
         "0X00X00X0"
     )
+
+    val displayCratesBalanceOnCratesDefaultCommand = true
 
     @Comment("The following fields are configurable messages.")
     val noKeyOpenAttempt = "${CC.RED}You do not have a key for this crate!"
@@ -27,4 +29,11 @@ class CratesSpigotConfig
 
     val crateBalanceHeader = "${CC.GRAY}Current crate key balance:"
     val crateBalanceEntry = " ${CC.AQUA}<crateDisplayName>: ${CC.WHITE}<crateKeyBalance>"
+
+    val crateWin = "${CC.GREEN}You won ${CC.SEC}<cratePrizeName>${CC.GREEN} from your crate roll!"
+    val crateWinFailure = "${CC.RED}You did not win anything! Your key was refunded."
+
+    val crateWinRefundSuccess = "${CC.RED}We are refunding your crate key as you closed the menu."
+    val crateWinRefundFailure = "${CC.RED}You were not refunded your crate key as you closed the menu too late into roll."
+    val crateWinRefundFailureInternal = "${CC.RED}We were unable to refund your crate key. Please contact administration!"
 }

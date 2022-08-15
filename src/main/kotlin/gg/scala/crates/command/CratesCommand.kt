@@ -24,18 +24,24 @@ object CratesCommand : ScalaCommand()
     @Default
     fun onDefault(player: Player)
     {
-        val cratePlayer = CratesPlayerService
-            .find(player) ?: return
+        if (configuration.displayCratesBalanceOnCratesDefaultCommand)
+        {
+            val cratePlayer = CratesPlayerService
+                .find(player) ?: return
 
-        configuration.crateBalanceHeader.sendToPlayer(player)
+            configuration.crateBalanceHeader.sendToPlayer(player)
 
-        CrateService.allCrates().forEach {
-            configuration.crateBalanceEntry
-                .sendToPlayer(
-                    player,
-                    "<crateDisplayName>" to it.displayName,
-                    "<crateKeyBalance>" to (cratePlayer.balances[it.uniqueId] ?: 0).toString().format("%,d"),
-                )
+            CrateService.allCrates().forEach {
+                configuration.crateBalanceEntry
+                    .sendToPlayer(
+                        player,
+                        "<crateDisplayName>" to it.displayName,
+                        "<crateKeyBalance>" to (cratePlayer.balances[it.uniqueId] ?: 0).toString().format("%,d"),
+                    )
+            }
+        } else
+        {
+            CrateViewMenu.open(player)
         }
     }
 

@@ -8,13 +8,13 @@ import gg.scala.commons.acf.annotation.CommandPermission
 import gg.scala.commons.acf.annotation.Default
 import gg.scala.commons.acf.annotation.HelpCommand
 import gg.scala.commons.acf.annotation.Subcommand
+import gg.scala.commons.acf.bukkit.contexts.OnlinePlayer
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.Crate
 import gg.scala.crates.crate.CrateService
 import gg.scala.crates.menu.editor.CrateEditorViewMenu
-import gg.scala.crates.menu.editor.prize.CratePrizeCompositeEditorContextMenu
 import gg.scala.crates.player.CratesPlayerService
 import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.player.LemonPlayer
@@ -42,15 +42,15 @@ object CratesManageCommand : ScalaCommand()
 
     @Subcommand("give-key")
     @CommandCompletion("@players @crates")
-    fun onGiveKey(player: Player, target: LemonPlayer, crate: Crate, amount: Int)
+    fun onGiveKey(player: Player, target: OnlinePlayer, crate: Crate, amount: Int)
     {
-        val targetProfile = CratesPlayerService.find(target.uniqueId)
+        val targetProfile = CratesPlayerService.find(target.player.uniqueId)
             ?: throw ConditionFailedException("Target's profile is corrupt.")
 
         targetProfile.balances[crate.uniqueId] =
             (targetProfile.balances[crate.uniqueId] ?: 0) + amount
 
-        player.sendMessage("${CC.SEC}Gave ${target.getColoredName()}${CC.SEC} ${CC.PRI}$amount${CC.SEC} crate keys.")
+        player.sendMessage("${CC.SEC}Gave ${target.player.displayName}${CC.SEC} ${CC.PRI}$amount${CC.SEC} crate keys.")
     }
 
     @Subcommand("control-panel")
