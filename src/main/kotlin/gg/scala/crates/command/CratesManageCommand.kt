@@ -17,7 +17,6 @@ import gg.scala.crates.crate.CrateService
 import gg.scala.crates.menu.editor.CrateEditorViewMenu
 import gg.scala.crates.player.CratesPlayerService
 import gg.scala.flavor.inject.Inject
-import gg.scala.lemon.player.LemonPlayer
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 

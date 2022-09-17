@@ -9,6 +9,8 @@ import xyz.mkotb.configapi.comment.Comment
  */
 class CratesSpigotConfig
 {
+    val debugMode = false
+
     @Comment("The /crates menu layout mapping.")
     val menuScheme = arrayOf(
         "ZXZZXZZXZ",

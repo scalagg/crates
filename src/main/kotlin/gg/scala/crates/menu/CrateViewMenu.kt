@@ -1,5 +1,6 @@
 package gg.scala.crates.menu
 
+import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.scheme.AbstractCompositeSchemedMenu
 import gg.scala.commons.scheme.impl.SinglePageSchemedMenu
 import gg.scala.crates.CratesSpigotConfig
@@ -83,7 +84,13 @@ object CrateViewMenu
                         .toButton { _, type ->
                             if (type!!.isRightClick)
                             {
-                                CrateService.openCrate(player, crate)
+                                try
+                                {
+                                    CrateService.openCrate(player, crate)
+                                } catch (exception: ConditionFailedException)
+                                {
+                                    player.sendMessage("${CC.RED}${exception.message}")
+                                }
                             } else
                             {
                                 CrateContentsMenu(crate).openMenu(player)

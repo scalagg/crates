@@ -1,9 +1,11 @@
 package gg.scala.crates.menu
 
+import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.crates.configuration
 import gg.scala.crates.crate.Crate
 import gg.scala.crates.crate.prize.CratePrize
 import gg.scala.crates.player.CratesPlayerService
+import gg.scala.crates.sendDebug
 import gg.scala.crates.sendToPlayer
 import me.lucko.helper.Schedulers
 import me.lucko.helper.random.RandomSelector
@@ -26,11 +28,15 @@ class CrateOpenMenu(
     private val crate: Crate
 ) : Menu("Opening crate...")
 {
+    companion object
+    {
+        const val ITERATION_SPEED = 700L
+    }
+
     private var crateRollStopped = false
     private var manuallyClosed = false
 
     private val applicable = this.crate.prizes
-        .sortedBy { it.weight }
         .shuffled()
         .filter {
             it.applicableTo(this.player)
@@ -40,64 +46,89 @@ class CrateOpenMenu(
     private val itemsRequired = LinkedList<CratePrize>()
     private val selectedRandom: CratePrize
 
+    private var expectedIterationAmount = 0
+    private var iterationAmount = 0
+
+    private var start: Long? = null
+
     init
     {
+        if (applicable.isEmpty())
+        {
+            throw ConditionFailedException("You cannot win any more items from this crate.")
+        }
+
         autoUpdateInterval = 10L
 
         placeholdBorders = true
         autoUpdate = true
 
-        val iterationSpeedSelection = (1000L..1100L).random()
-        var iterationAmount = 0
+        sendDebug("=== Developer Debug ===")
 
-        while (autoUpdateInterval <= iterationSpeedSelection)
+        while (autoUpdateInterval <= ITERATION_SPEED)
         {
-            iterationAmount += 1
+            expectedIterationAmount += 1
             autoUpdateInterval += 20L
         }
+
+        sendDebug("Required by logic: $expectedIterationAmount")
 
         this.selectedRandom = RandomSelector
             .weighted(applicable).pick()
 
-        while (iterationAmount < itemsRequired.size)
+        sendDebug("Selected: ${selectedRandom.name}")
+
+        while (expectedIterationAmount > itemsRequired.size)
         {
-            itemsRequired += applicable
+            itemsRequired += applicable.shuffled()
+            sendDebug("  - Added applicable: ${applicable.size}, now ${itemsRequired.size}")
         }
 
-        while (itemsRequired.size != iterationAmount)
+        while (itemsRequired.size != expectedIterationAmount)
         {
             itemsRequired.removeLast()
+            sendDebug("  - Removed element: now ${itemsRequired.size}")
         }
 
-        itemsRequired.removeLast()
-        itemsRequired.add(selectedRandom)
+        val shuffled = applicable.shuffled()
 
-        Bukkit.broadcastMessage("=== Developer Debug ===")
-        Bukkit.broadcastMessage("Selected: ${selectedRandom.name}")
-        Bukkit.broadcastMessage("Size of items required: ${itemsRequired.size}")
-        Bukkit.broadcastMessage("Required by logic: $iterationAmount")
-        Bukkit.broadcastMessage("Iteration speed selection: $iterationSpeedSelection")
-        Bukkit.broadcastMessage("=======================")
+        itemsRequired.removeLast()
+        itemsRequired += shuffled.take(5)
+        itemsRequired.add(selectedRandom)
+        itemsRequired += shuffled
+
+        sendDebug("  - Added selected random: now ${itemsRequired.size}")
+        sendDebug("=======================")
 
         // reset our auto-update interval after we decide the end choice
         autoUpdateInterval = 10L
-
-        Schedulers.sync()
-            .runRepeating({ task ->
-                if (autoUpdateInterval >= iterationSpeedSelection || manuallyClosed)
-                {
-                    crateRollStopped = true
-                    task.closeSilently()
-                    return@runRepeating
-                }
-
-                autoUpdateInterval += 20L
-            }, 4L, 5L)
     }
 
     override fun getButtons(player: Player): Map<Int, Button>
     {
+        if (start == null)
+        {
+            start = System.currentTimeMillis()
+        }
+
+        if (autoUpdateInterval >= ITERATION_SPEED || manuallyClosed)
+        {
+            sendDebug(
+                "Took ${System.currentTimeMillis() - start!!} ms to roll"
+            )
+            sendDebug(
+                "Went through $iterationAmount iterations, expected $expectedIterationAmount"
+            )
+            sendDebug("=======================")
+
+            crateRollStopped = true
+        } else
+        {
+            autoUpdateInterval += 20L
+        }
+
         val buttons = mutableMapOf<Int, Button>()
+        iterationAmount += 1
 
         if (crateRollStopped)
         {
