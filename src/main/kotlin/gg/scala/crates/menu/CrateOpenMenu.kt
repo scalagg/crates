@@ -7,6 +7,7 @@ import gg.scala.crates.crate.prize.CratePrize
 import gg.scala.crates.keyProvider
 import gg.scala.crates.sendDebug
 import gg.scala.crates.sendToPlayer
+import me.lucko.helper.Schedulers
 import me.lucko.helper.random.RandomSelector
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
@@ -151,31 +152,34 @@ class CrateOpenMenu(
             start = System.currentTimeMillis()
         }
 
-        // Ensure the refresh delay is less than the targeted iteration speed.
-        if (manuallyClosed || autoUpdateInterval >= ITERATION_SPEED)
-        {
-            sendDebug(
-                "Took ${System.currentTimeMillis() - start!!} ms to roll"
-            )
-            sendDebug(
-                "Went through $iterationAmount iterations, expected $expectedIterationAmount"
-            )
-            sendDebug("=======================")
-
-            crateRollStopped = true
-        } else
-        {
-            autoUpdateInterval += 20L
-        }
-
         val buttons = mutableMapOf<Int, Button>()
 
         if (!completedCompletionLogic)
         {
             iterationAmount += 1
 
+            // Ensure the refresh delay is less than the targeted iteration speed.
+            if (manuallyClosed || autoUpdateInterval >= ITERATION_SPEED)
+            {
+                sendDebug(
+                    "Took ${System.currentTimeMillis() - start!!} ms to roll"
+                )
+                sendDebug(
+                    "Went through $iterationAmount iterations, expected $expectedIterationAmount"
+                )
+                sendDebug("=======================")
+
+                crateRollStopped = true
+            } else
+            {
+                autoUpdateInterval += 20L
+            }
+
             if (crateRollStopped)
             {
+                // stopping auto update while we handle completion logic
+                this.autoUpdate = false
+
                 this.completedCompletionLogic = true
                 this.selectedRandom.apply(player)
 
@@ -186,7 +190,18 @@ class CrateOpenMenu(
                 player.playSound(player.location, Sound.FIREWORK_LAUNCH, 1.0F, 1.0F)
                 player.closeInventory()
 
-                this.autoUpdateInterval = 250L
+                Schedulers.sync()
+                    .callLater({
+                        if (!player.isOnline)
+                        {
+                            return@callLater
+                        }
+
+                        player.closeInventory()
+                    }, 100L)
+
+                this.autoUpdateInterval = 50L
+                this.autoUpdate = true
             } else
             {
                 // shift last to first, pushes everything else forward
@@ -221,7 +236,9 @@ class CrateOpenMenu(
 
             buttons[index] = ItemBuilder
                 .copyOf(prizeInIndex.material)
-                .name("${CC.AQUA}${prizeInIndex.name}")
+                .name("${
+                    if (crateRollStopped && index == 4) CC.B_GOLD else CC.AQUA
+                }${prizeInIndex.name}")
                 .addToLore(
                     "${CC.GRAY}Rarity: ${prizeInIndex.rarity.chatColor}${prizeInIndex.rarity.name}"
                 )
