@@ -4,6 +4,7 @@ import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.crates.configuration
 import gg.scala.crates.crate.Crate
 import gg.scala.crates.crate.prize.CratePrize
+import gg.scala.crates.keyProvider
 import gg.scala.crates.player.CratesPlayerService
 import gg.scala.crates.sendDebug
 import gg.scala.crates.sendToPlayer
@@ -206,13 +207,6 @@ class CrateOpenMenu(
 
     private fun refundCrateKey(player: Player)
     {
-        val cratePlayer = CratesPlayerService.find(player)
-            ?: return kotlin.run {
-                configuration.crateWinRefundFailureInternal.sendToPlayer(player)
-            }
-
-        cratePlayer.balances[crate.uniqueId] =
-            (cratePlayer.balances[crate.uniqueId] ?: 0) + 1
-        cratePlayer.save()
+        keyProvider().addKeysFor(player.uniqueId, crate.uniqueId, 1)
     }
 }

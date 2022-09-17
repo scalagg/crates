@@ -1,5 +1,6 @@
 package gg.scala.crates
 
+import gg.scala.crates.keys.KeyProvider
 import me.lucko.helper.utils.Players
 import net.evilblock.cubed.util.Color
 import org.bukkit.entity.Player
@@ -9,6 +10,9 @@ import org.bukkit.entity.Player
  * @since 8/14/2022
  */
 lateinit var configuration: CratesSpigotConfig
+lateinit var plugin: CratesSpigotPlugin
+
+fun keyProvider() = plugin.keyProvider
 
 fun List<String>.sendToPlayer(
     player: Player,

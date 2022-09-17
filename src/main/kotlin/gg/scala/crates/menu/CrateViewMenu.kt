@@ -6,6 +6,7 @@ import gg.scala.commons.scheme.impl.SinglePageSchemedMenu
 import gg.scala.crates.CratesSpigotConfig
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.CrateService
+import gg.scala.crates.keyProvider
 import gg.scala.crates.player.CratesPlayerService
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
@@ -76,7 +77,9 @@ object CrateViewMenu
                         .name("${CC.B_AQUA}${crate.displayName}")
                         .addToLore(
                             "${CC.GRAY}Current crate balance:",
-                            "${CC.WHITE}${cratePlayer.balances[crate.uniqueId] ?: 0} keys",
+                            "${CC.WHITE}${
+                                keyProvider().getKeysFor(player.uniqueId, crate.uniqueId)
+                            } keys",
                             "",
                             "${CC.AQUA}Right-click to open crate.",
                             "${CC.D_GRAY}Left-click to view contents.",

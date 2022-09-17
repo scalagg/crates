@@ -12,12 +12,6 @@ import java.util.*
 @Service
 object CratesPlayerService : ProfileOrchestrator<CratesPlayer>()
 {
-    @Configure
-    fun configure()
-    {
-        this.subscribe()
-    }
-
     override fun new(uniqueId: UUID) = CratesPlayer(uniqueId)
     override fun type() = CratesPlayer::class
 }
