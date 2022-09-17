@@ -170,7 +170,7 @@ class CrateOpenMenu(
             }
 
             buttons[index] = ItemBuilder
-                .of(prizeInIndex.material)
+                .copyOf(prizeInIndex.material)
                 .name("${CC.AQUA}${prizeInIndex.name}")
                 .addToLore(
                     "${CC.GRAY}Rarity: ${prizeInIndex.rarity.chatColor}${prizeInIndex.rarity.name}"

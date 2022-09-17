@@ -48,14 +48,20 @@ class CrateContentsMenu(
         for (prize in crate.prizes.sortedByDescending { it.weight })
         {
             buttons[buttons.size] = ItemBuilder
-                .of(prize.material)
+                .copyOf(prize.material)
                 .name("${CC.B_AQUA}${prize.name}")
                 .apply {
-                    addToLore(*prize.description.toTypedArray())
+                    if (prize.description.isEmpty())
+                    {
+                        addToLore("${CC.RED}No description.")
+                    } else
+                    {
+                        addToLore(*prize.description.toTypedArray())
+                    }
                 }
                 .addToLore(
                     "",
-                    "${CC.GRAY}Rarity: ${prize.rarity.chatColor}${prize.rarity.name}",
+                    "${CC.WHITE}Rarity: ${prize.rarity.chatColor}${prize.rarity.name}",
                     "",
                     if (!prize.applicableTo(player)) "${CC.RED}You cannot win this item!" else "${CC.GREEN}You are able to win this item!"
                 )

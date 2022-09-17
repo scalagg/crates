@@ -41,7 +41,7 @@ class CrateEditorContentsMenu(
         {
             Tasks.delayed(1L)
             {
-                CrateEditorMenu(this.crate, this.plugin)
+                CrateEditorMenu(this.crate, this.plugin).openMenu(player)
             }
         }
     }
@@ -53,10 +53,10 @@ class CrateEditorContentsMenu(
         for (prize in crate.prizes.sortedByDescending { it.weight })
         {
             buttons[buttons.size] = ItemBuilder
-                .of(prize.material)
-                .name("${CC.B_AQUA}${prize.name}")
+                .copyOf(prize.material)
+                .name("${CC.B_GOLD}${prize.name}")
                 .addToLore(
-                    "${CC.GRAY}Rarity: ${prize.rarity.chatColor}${prize.rarity.name}",
+                    "${CC.WHITE}Rarity: ${prize.rarity.chatColor}${prize.rarity.name}",
                     ""
                 )
                 .apply {
@@ -69,11 +69,11 @@ class CrateEditorContentsMenu(
                     }
 
                     addToLore("")
-                    addToLore("${CC.WHITE}Rarity: ${prize.rarity.name}")
-                    addToLore("${CC.WHITE}Material: ${prize.material.name}")
-                    addToLore("${CC.WHITE}Weight: ${prize.weightInternal}")
+                    addToLore("${CC.WHITE}Rarity: ${CC.GOLD}${prize.rarity.name}")
+                    addToLore("${CC.WHITE}Material: ${CC.GOLD}${prize.material.type.name}")
+                    addToLore("${CC.WHITE}Weight: ${CC.GOLD}${prize.weightInternal}")
                     addToLore("")
-                    addToLore("${CC.GREEN}Click to edit.")
+                    addToLore("${CC.GREEN}Click to edit!")
                 }
                 .toButton { _, _ ->
                     val mapping = CompositeCratePrizeService
