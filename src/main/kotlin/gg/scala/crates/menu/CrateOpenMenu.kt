@@ -141,7 +141,8 @@ class CrateOpenMenu(
     /**
      * We'll use this for the fun rainbow obfuscated slot logic.
      */
-    val availableColors = listOf(3, 2, 10, 4, 1, 13, 11, 9, 6, 14, 5)
+    private val availableColors = listOf(3, 2, 10, 4, 1, 13, 11, 9, 6, 14, 5)
+    private var completedCompletionLogic = false
 
     override fun getButtons(player: Player): Map<Int, Button>
     {
@@ -168,24 +169,30 @@ class CrateOpenMenu(
         }
 
         val buttons = mutableMapOf<Int, Button>()
-        iterationAmount += 1
 
-        if (crateRollStopped)
+        if (!completedCompletionLogic)
         {
-            this.autoUpdate = false
-            this.selectedRandom.apply(player)
+            iterationAmount += 1
 
-            configuration.crateWin.sendToPlayer(
-                player, "<cratePrizeName>" to this.selectedRandom.name
-            )
+            if (crateRollStopped)
+            {
+                this.completedCompletionLogic = true
+                this.selectedRandom.apply(player)
 
-            player.playSound(player.location, Sound.FIREWORK_LAUNCH, 1.0F, 1.0F)
-            player.closeInventory()
-        } else
-        {
-            // shift last to first, pushes everything else forward
-            this.itemsRequired.removeFirst()
-            player.playSound(player.location, Sound.CLICK, 1.0F, 1.0F)
+                configuration.crateWin.sendToPlayer(
+                    player, "<cratePrizeName>" to this.selectedRandom.name
+                )
+
+                player.playSound(player.location, Sound.FIREWORK_LAUNCH, 1.0F, 1.0F)
+                player.closeInventory()
+
+                this.autoUpdateInterval = 250L
+            } else
+            {
+                // shift last to first, pushes everything else forward
+                this.itemsRequired.removeFirst()
+                player.playSound(player.location, Sound.CLICK, 1.0F, 1.0F)
+            }
         }
 
         // add items in the current index to the button map
@@ -205,7 +212,9 @@ class CrateOpenMenu(
             if (this.crateRollStopped && index != 4)
             {
                 buttons[index] = Button.placeholder(
-                    Material.STAINED_GLASS_PANE, availableColors.random(), "${CC.GREEN}You won!"
+                    Material.STAINED_GLASS_PANE,
+                    availableColors.random().toByte(),
+                    "${CC.B_GOLD}You won!"
                 )
                 continue
             }
