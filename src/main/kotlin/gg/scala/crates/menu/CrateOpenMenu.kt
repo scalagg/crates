@@ -65,6 +65,15 @@ class CrateOpenMenu(
 
         sendDebug("=== Developer Debug ===")
 
+        /**
+         * Calculates the number of iterations required to meet
+         * the final iteration speed of (currently) 700ms.
+         *
+         * Since one prize element is removed during each iteration,
+         * we have to calculate this while compensating for the
+         * growth of delay with the iteration speed to ensure there
+         * aren't any weight synchronization issues.
+         */
         while (autoUpdateInterval <= ITERATION_SPEED)
         {
             expectedIterationAmount += 1
@@ -73,17 +82,22 @@ class CrateOpenMenu(
 
         sendDebug("Required by logic: $expectedIterationAmount")
 
+        // randomly select an element based on its internal rarity/weight.
         this.selectedRandom = RandomSelector
             .weighted(applicable).pick()
 
         sendDebug("Selected: ${selectedRandom.name}")
 
+        // ensure the iteration amount matches the amounts we have.
+        // we remove the first entries of these required items every menu iteration.
         while (expectedIterationAmount > itemsRequired.size)
         {
             itemsRequired += applicable.shuffled()
             sendDebug("  - Added applicable: ${applicable.size}, now ${itemsRequired.size}")
         }
 
+        // remove any extra elements at the end, we'll fill
+        // this stuff in with our prize and some filler items later
         while (itemsRequired.size != expectedIterationAmount)
         {
             itemsRequired.removeLast()
@@ -92,6 +106,8 @@ class CrateOpenMenu(
 
         val shuffled = applicable.shuffled()
 
+        // compensate for empty space at the end
+        // (we want it to be in the middle of the menu)
         itemsRequired.removeLast()
         itemsRequired += shuffled.take(5)
         itemsRequired.add(selectedRandom)
