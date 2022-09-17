@@ -53,11 +53,28 @@ class CrateOpenMenu(
 
     init
     {
+        /**
+         * Ensure there are items we can use to calculate our fancy logic here.
+         *
+         * If a crate is marked as do-not-check-for-applicable, this
+         * won't ever be empty unless there are no items in the crate.
+         *
+         * We're throwing an exception as the menu is eagerly opened on
+         * initialization, and there's no way to stop it from opening if
+         * we don't throw an exception or callback something on
+         * initialization, which would be pretty stupid.
+         */
         if (applicable.isEmpty())
         {
             throw ConditionFailedException("You cannot win any more items from this crate.")
         }
 
+        /**
+         * Start our auto update interval at 10 ticks.
+         *
+         * This value is bumped up linearly over the
+         * course of the multiple menu iterations.
+         */
         autoUpdateInterval = 10L
 
         placeholdBorders = true
@@ -110,6 +127,7 @@ class CrateOpenMenu(
         // (we want it to be in the middle of the menu)
         itemsRequired.removeLast()
         itemsRequired += shuffled.take(5)
+
         itemsRequired.add(selectedRandom)
         itemsRequired += shuffled
 
@@ -120,6 +138,11 @@ class CrateOpenMenu(
         autoUpdateInterval = 10L
     }
 
+    /**
+     * We'll use this for the fun rainbow obfuscated slot logic.
+     */
+    val availableColors = listOf(3, 2, 10, 4, 1, 13, 11, 9, 6, 14, 5)
+
     override fun getButtons(player: Player): Map<Int, Button>
     {
         if (start == null)
@@ -127,6 +150,7 @@ class CrateOpenMenu(
             start = System.currentTimeMillis()
         }
 
+        // Ensure the refresh delay is less than the targeted iteration speed.
         if (manuallyClosed || autoUpdateInterval >= ITERATION_SPEED)
         {
             sendDebug(
@@ -167,6 +191,7 @@ class CrateOpenMenu(
         // add items in the current index to the button map
         for (index in 1..7)
         {
+            // Use the selected random to prevent weird issues if there aren't any filler items.
             val prizeInIndex = if (this.crateRollStopped)
             {
                 this.selectedRandom
@@ -180,7 +205,7 @@ class CrateOpenMenu(
             if (this.crateRollStopped && index != 4)
             {
                 buttons[index] = Button.placeholder(
-                    Material.STAINED_GLASS_PANE, 5, "${CC.GREEN}You won!"
+                    Material.STAINED_GLASS_PANE, availableColors.random(), "${CC.GREEN}You won!"
                 )
                 continue
             }
