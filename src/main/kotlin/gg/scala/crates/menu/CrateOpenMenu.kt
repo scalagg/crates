@@ -127,7 +127,7 @@ class CrateOpenMenu(
             start = System.currentTimeMillis()
         }
 
-        if (autoUpdateInterval >= ITERATION_SPEED || manuallyClosed)
+        if (manuallyClosed || autoUpdateInterval >= ITERATION_SPEED)
         {
             sendDebug(
                 "Took ${System.currentTimeMillis() - start!!} ms to roll"
@@ -209,6 +209,13 @@ class CrateOpenMenu(
         {
             this.manuallyClosed = true
 
+            /**
+             * Ensure players don't exploit crate functionality
+             * by leaving after estimating their prize.
+             *
+             * We'll make sure that they aren't refunded if they
+             * exit too late into the rolling animation.
+             */
             if (this.autoUpdateInterval >= 400)
             {
                 configuration.crateWinRefundFailure.sendToPlayer(player)
