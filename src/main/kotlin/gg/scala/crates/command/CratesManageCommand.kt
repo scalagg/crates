@@ -14,12 +14,13 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.Crate
 import gg.scala.crates.crate.CrateService
+import gg.scala.crates.keyProvider
 import gg.scala.crates.menu.editor.CrateEditorViewMenu
 import gg.scala.crates.player.CratesPlayerService
 import gg.scala.flavor.inject.Inject
-import gg.scala.lemon.player.LemonPlayer
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -42,15 +43,16 @@ object CratesManageCommand : ScalaCommand()
 
     @Subcommand("give-key")
     @CommandCompletion("@players @crates")
-    fun onGiveKey(player: Player, target: OnlinePlayer, crate: Crate, amount: Int)
+    fun onGiveKey(
+        player: Player, target: OnlinePlayer,
+        crate: Crate, amount: Int
+    ): CompletableFuture<Void>
     {
-        val targetProfile = CratesPlayerService.find(target.player.uniqueId)
-            ?: throw ConditionFailedException("Target's profile is corrupt.")
-
-        targetProfile.balances[crate.uniqueId] =
-            (targetProfile.balances[crate.uniqueId] ?: 0) + amount
-
-        player.sendMessage("${CC.SEC}Gave ${target.player.displayName}${CC.SEC} ${CC.PRI}$amount${CC.SEC} crate keys.")
+        return keyProvider()
+            .addKeysFor(target.player.uniqueId, crate.uniqueId, amount)
+            .thenRun {
+                player.sendMessage("${CC.SEC}Gave ${target.player.displayName}${CC.SEC} ${CC.PRI}$amount${CC.SEC} crate keys.")
+            }
     }
 
     @Subcommand("control-panel")

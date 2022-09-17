@@ -1,11 +1,13 @@
 package gg.scala.crates.menu
 
+import gg.scala.crates.configuration
 import gg.scala.crates.crate.Crate
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 /**
@@ -48,20 +50,32 @@ class CrateContentsMenu(
         for (prize in crate.prizes.sortedByDescending { it.weight })
         {
             buttons[buttons.size] = ItemBuilder
-                .of(prize.material)
+                .copyOf(prize.material)
                 .name("${CC.B_AQUA}${prize.name}")
-                .addToLore(
-                    "${CC.GRAY}Rarity: ${prize.rarity.chatColor}${prize.rarity.name}",
-                    ""
-                )
                 .apply {
-                    addToLore(*prize.description.toTypedArray())
+                    if (prize.description.isEmpty())
+                    {
+                        addToLore("${CC.RED}No description.")
+                    } else
+                    {
+                        addToLore(*prize.description.toTypedArray())
+                    }
                 }
+                .addToLore(
+                    "",
+                    "${CC.WHITE}Rarity: ${prize.rarity.chatColor}${prize.rarity.name}",
+                    "",
+                    if (!prize.applicableTo(player)) "${CC.RED}You cannot win this item!" else "${CC.GREEN}You are able to win this item!"
+                )
                 .toButton()
         }
 
         return buttons
     }
 
-    override fun getPrePaginatedTitle(player: Player) = "Viewing crate ${crate.displayName}${CC.D_GRAY}..."
+    override fun getPrePaginatedTitle(player: Player) = String
+        .format(
+            configuration.crateViewScopeTitle,
+            ChatColor.stripColor(crate.displayName)
+        )
 }

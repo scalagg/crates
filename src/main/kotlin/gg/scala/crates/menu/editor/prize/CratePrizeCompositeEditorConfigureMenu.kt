@@ -48,7 +48,6 @@ class CratePrizeCompositeEditorConfigureMenu(
     {
         if (manualClose)
         {
-
             player.sendMessage("${CC.RED}Discarded your prize configuration.")
 
             Tasks.delayed(1L)
@@ -213,6 +212,17 @@ class CratePrizeCompositeEditorConfigureMenu(
                 }
 
                 player.sendMessage("${CC.GREEN}Added/updated item to crate ${CC.SEC}${crate.uniqueId}${CC.GREEN}!")
+
+                Tasks.delayed(1L)
+                {
+                    if (fallback != null)
+                    {
+                        fallback.openMenu(player)
+                        return@delayed
+                    }
+
+                    CratePrizeCompositeEditorContextMenu(crate, this.plugin).openMenu(player)
+                }
             }
 
         return buttons

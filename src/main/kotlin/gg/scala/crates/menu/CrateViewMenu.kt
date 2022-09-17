@@ -1,10 +1,13 @@
 package gg.scala.crates.menu
 
+import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.scheme.AbstractCompositeSchemedMenu
 import gg.scala.commons.scheme.impl.SinglePageSchemedMenu
 import gg.scala.crates.CratesSpigotConfig
 import gg.scala.crates.CratesSpigotPlugin
+import gg.scala.crates.configuration
 import gg.scala.crates.crate.CrateService
+import gg.scala.crates.keyProvider
 import gg.scala.crates.player.CratesPlayerService
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
@@ -37,7 +40,7 @@ object CrateViewMenu
     private fun regenerateTemplate()
     {
         this.template = SinglePageSchemedMenu()
-            .title("Select a crate to open!")
+            .title(configuration.crateViewTitle)
             .pattern(
                 *this.plugin
                     .config<CratesSpigotConfig>()
@@ -75,7 +78,9 @@ object CrateViewMenu
                         .name("${CC.B_AQUA}${crate.displayName}")
                         .addToLore(
                             "${CC.GRAY}Current crate balance:",
-                            "${CC.WHITE}${cratePlayer.balances[crate.uniqueId] ?: 0} keys",
+                            "${CC.WHITE}${
+                                keyProvider().getKeysFor(player.uniqueId, crate)
+                            } keys",
                             "",
                             "${CC.AQUA}Right-click to open crate.",
                             "${CC.D_GRAY}Left-click to view contents.",
@@ -83,7 +88,13 @@ object CrateViewMenu
                         .toButton { _, type ->
                             if (type!!.isRightClick)
                             {
-                                CrateService.openCrate(player, crate)
+                                try
+                                {
+                                    CrateService.openCrate(player, crate)
+                                } catch (exception: ConditionFailedException)
+                                {
+                                    player.sendMessage("${CC.RED}${exception.message}")
+                                }
                             } else
                             {
                                 CrateContentsMenu(crate).openMenu(player)

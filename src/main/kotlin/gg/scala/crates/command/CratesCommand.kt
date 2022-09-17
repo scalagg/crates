@@ -1,12 +1,14 @@
 package gg.scala.crates.command
 
 import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandPermission
 import gg.scala.commons.acf.annotation.Default
 import gg.scala.commons.acf.annotation.Subcommand
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.crates.configuration
 import gg.scala.crates.crate.CrateService
+import gg.scala.crates.keyProvider
 import gg.scala.crates.menu.CrateViewMenu
 import gg.scala.crates.player.CratesPlayerService
 import gg.scala.crates.sendToPlayer
@@ -26,8 +28,12 @@ object CratesCommand : ScalaCommand()
     {
         if (configuration.displayCratesBalanceOnCratesDefaultCommand)
         {
-            val cratePlayer = CratesPlayerService
-                .find(player) ?: return
+            player.sendMessage(
+                keyProvider().javaClass.name.split(".")
+                    .joinToString(".") {
+                        if (it.first().isUpperCase()) it else it.first().toString()
+                    }
+            )
 
             configuration.crateBalanceHeader.sendToPlayer(player)
 
@@ -36,7 +42,9 @@ object CratesCommand : ScalaCommand()
                     .sendToPlayer(
                         player,
                         "<crateDisplayName>" to it.displayName,
-                        "<crateKeyBalance>" to (cratePlayer.balances[it.uniqueId] ?: 0).toString().format("%,d"),
+                        "<crateKeyBalance>" to keyProvider()
+                            .getKeysFor(player.uniqueId, it)
+                            .toString().format("%,d"),
                     )
             }
         } else
@@ -46,6 +54,7 @@ object CratesCommand : ScalaCommand()
     }
 
     @Subcommand("menu")
+    @CommandPermission("crates.command.crates.menu")
     fun onMenu(player: Player)
     {
         CrateViewMenu.open(player)

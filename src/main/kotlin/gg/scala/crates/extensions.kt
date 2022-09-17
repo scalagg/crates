@@ -1,5 +1,6 @@
 package gg.scala.crates
 
+import me.lucko.helper.utils.Players
 import net.evilblock.cubed.util.Color
 import org.bukkit.entity.Player
 
@@ -8,6 +9,9 @@ import org.bukkit.entity.Player
  * @since 8/14/2022
  */
 lateinit var configuration: CratesSpigotConfig
+lateinit var plugin: CratesSpigotPlugin
+
+fun keyProvider() = plugin.keyProvider
 
 fun List<String>.sendToPlayer(
     player: Player,
@@ -37,4 +41,16 @@ fun String.sendToPlayer(
     player.sendMessage(
         Color.translate(cached)
     )
+}
+
+fun sendDebug(message: String)
+{
+    if (configuration.debugMode)
+    {
+        Players.all()
+            .filter { it.isOp }
+            .forEach {
+                it.sendMessage(message)
+            }
+    }
 }

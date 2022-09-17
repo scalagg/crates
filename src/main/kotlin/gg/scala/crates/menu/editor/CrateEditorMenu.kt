@@ -46,7 +46,7 @@ class CrateEditorMenu(
     {
         val buttons = mutableMapOf<Int, Button>()
 
-        buttons[11] = ItemBuilder
+        buttons[10] = ItemBuilder
             .of(Material.SIGN)
             .name("${CC.GREEN}Display Name")
             .addToLore(
@@ -74,7 +74,7 @@ class CrateEditorMenu(
                     .start(player)
             }
 
-        buttons[13] = ItemBuilder
+        buttons[12] = ItemBuilder
             .of(Material.GRILLED_PORK)
             .name("${CC.GREEN}Manage Items")
             .addToLore(
@@ -86,7 +86,24 @@ class CrateEditorMenu(
                 CrateEditorContentsMenu(crate, plugin).openMenu(player)
             }
 
-        buttons[15] = ItemBuilder
+        buttons[14] = ItemBuilder
+            .of(Material.GOLDEN_CARROT)
+            .name("${CC.GREEN}Applicable status")
+            .addToLore(
+                "${CC.GRAY}Allow players to receive same items multiple times.",
+                "",
+                "${CC.WHITE}Current: ${CC.GREEN}${crate.applicable}",
+                "",
+                "${CC.YELLOW}Click to toggle"
+            )
+            .toButton { _, _ ->
+                crate.applicable = !crate.applicable
+                CrateService.saveConfig()
+
+                player.sendMessage("${CC.GREEN}ok done ${crate.applicable}")
+            }
+
+        buttons[16] = ItemBuilder
             .copyOf(
                 object : AddButton()
                 {}.getButtonItem(player)

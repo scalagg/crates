@@ -4,6 +4,7 @@ import me.lucko.helper.random.Weighted
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializable
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.util.function.UnaryOperator
 
 /**
@@ -12,7 +13,7 @@ import java.util.function.UnaryOperator
  */
 abstract class CratePrize(
     var name: String,
-    val material: Material,
+    val material: ItemStack,
     var weightInternal: Double,
     var description: MutableList<String>,
     var rarity: CratePrizeRarity = CratePrizeRarity.Common

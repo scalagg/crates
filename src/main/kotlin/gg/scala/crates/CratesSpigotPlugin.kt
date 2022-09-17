@@ -3,6 +3,8 @@ package gg.scala.crates
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.config.annotations.ContainerConfig
+import gg.scala.crates.keys.DefaultKeyProvider
+import gg.scala.crates.keys.KeyProvider
 import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 
@@ -26,14 +28,12 @@ import me.lucko.helper.plugin.ap.PluginDependency
 )
 class CratesSpigotPlugin : ExtendedScalaPlugin()
 {
+    var keyProvider: KeyProvider = DefaultKeyProvider
+
     @ContainerEnable
     fun containerEnable()
     {
         configuration = this.config()
-
-        if (!this.dataFolder.exists())
-        {
-            this.dataFolder.mkdirs()
-        }
+        plugin = this
     }
 }

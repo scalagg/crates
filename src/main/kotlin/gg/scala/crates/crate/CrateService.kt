@@ -7,6 +7,7 @@ import gg.scala.commons.util.Files
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.configuration
 import gg.scala.crates.crate.prize.CratePrize
+import gg.scala.crates.keyProvider
 import gg.scala.crates.menu.CrateOpenMenu
 import gg.scala.crates.player.CratesPlayerService
 import gg.scala.crates.sendToPlayer
@@ -42,23 +43,21 @@ object CrateService
 
     fun openCrate(player: Player, crate: Crate)
     {
-        val cratePlayer = CratesPlayerService.find(player)
-            ?: return kotlin.run {
-                configuration.internalError.sendToPlayer(player)
-            }
+        val balance = keyProvider()
+            .getKeysFor(
+                player.uniqueId, crate
+            )
 
-        val balance = cratePlayer.balances[crate.uniqueId]
-
-        if (balance == null || balance <= 0)
+        if (balance <= 0)
         {
             configuration.noKeyOpenAttempt.sendToPlayer(player)
             return
         }
 
-        cratePlayer.balances[crate.uniqueId] = balance - 1
-        cratePlayer.save()
-
-        CrateOpenMenu(player, crate).openMenu(player)
+        keyProvider().useKeyFor(player.uniqueId, crate.uniqueId)
+            .thenRun {
+                CrateOpenMenu(player, crate).openMenu(player)
+            }
     }
 
     @Configure
