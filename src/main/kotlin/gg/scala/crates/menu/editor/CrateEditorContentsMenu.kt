@@ -60,7 +60,18 @@ class CrateEditorContentsMenu(
                     ""
                 )
                 .apply {
-                    addToLore(*prize.description.toTypedArray())
+                    if (prize.description.isEmpty())
+                    {
+                        addToLore("${CC.RED}No description.")
+                    } else
+                    {
+                        addToLore(*prize.description.toTypedArray())
+                    }
+
+                    addToLore("")
+                    addToLore("${CC.WHITE}Rarity: ${prize.rarity.name}")
+                    addToLore("${CC.WHITE}Material: ${prize.material.name}")
+                    addToLore("${CC.WHITE}Weight: ${prize.weightInternal}")
                     addToLore("")
                     addToLore("${CC.GREEN}Click to edit.")
                 }

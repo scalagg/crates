@@ -33,8 +33,6 @@ class CratesSpigotConfig
     val crateBalanceEntry = " ${CC.AQUA}<crateDisplayName>: ${CC.WHITE}<crateKeyBalance>"
 
     val crateWin = "${CC.GREEN}You won ${CC.SEC}<cratePrizeName>${CC.GREEN} from your crate roll!"
-    val crateWinFailure = "${CC.RED}You did not win anything! Your key was refunded."
-
     val crateWinRefundSuccess = "${CC.RED}We are refunding your crate key as you closed the menu."
     val crateWinRefundFailure = "${CC.RED}You were not refunded your crate key as you closed the menu too late into roll."
     val crateWinRefundFailureInternal = "${CC.RED}We were unable to refund your crate key. Please contact administration!"
