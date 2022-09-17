@@ -1,11 +1,13 @@
 package gg.scala.crates.menu
 
+import gg.scala.crates.configuration
 import gg.scala.crates.crate.Crate
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 /**
@@ -71,5 +73,9 @@ class CrateContentsMenu(
         return buttons
     }
 
-    override fun getPrePaginatedTitle(player: Player) = "Viewing crate ${crate.displayName}${CC.D_GRAY}..."
+    override fun getPrePaginatedTitle(player: Player) = String
+        .format(
+            configuration.crateViewScopeTitle,
+            ChatColor.stripColor(crate.displayName)
+        )
 }

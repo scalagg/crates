@@ -27,7 +27,9 @@ import java.util.LinkedList
 class CrateOpenMenu(
     private val player: Player,
     private val crate: Crate
-) : Menu("Opening crate...")
+) : Menu(
+    configuration.crateOpenTitle
+)
 {
     companion object
     {

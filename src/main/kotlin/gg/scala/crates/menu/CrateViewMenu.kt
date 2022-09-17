@@ -5,6 +5,7 @@ import gg.scala.commons.scheme.AbstractCompositeSchemedMenu
 import gg.scala.commons.scheme.impl.SinglePageSchemedMenu
 import gg.scala.crates.CratesSpigotConfig
 import gg.scala.crates.CratesSpigotPlugin
+import gg.scala.crates.configuration
 import gg.scala.crates.crate.CrateService
 import gg.scala.crates.keyProvider
 import gg.scala.crates.player.CratesPlayerService
@@ -39,7 +40,7 @@ object CrateViewMenu
     private fun regenerateTemplate()
     {
         this.template = SinglePageSchemedMenu()
-            .title("Select a crate to open!")
+            .title(configuration.crateViewTitle)
             .pattern(
                 *this.plugin
                     .config<CratesSpigotConfig>()
