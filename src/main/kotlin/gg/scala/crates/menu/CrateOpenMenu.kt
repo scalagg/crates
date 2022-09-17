@@ -5,20 +5,17 @@ import gg.scala.crates.configuration
 import gg.scala.crates.crate.Crate
 import gg.scala.crates.crate.prize.CratePrize
 import gg.scala.crates.keyProvider
-import gg.scala.crates.player.CratesPlayerService
 import gg.scala.crates.sendDebug
 import gg.scala.crates.sendToPlayer
-import me.lucko.helper.Schedulers
 import me.lucko.helper.random.RandomSelector
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
-import java.util.LinkedList
+import java.util.*
 
 /**
  * @author GrowlyX
@@ -42,7 +39,7 @@ class CrateOpenMenu(
     private val applicable = this.crate.prizes
         .shuffled()
         .filter {
-            it.applicableTo(this.player)
+            (this.crate.applicable || it.applicableTo(this.player))
         }
         .toMutableList()
 
