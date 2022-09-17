@@ -78,7 +78,7 @@ object CrateViewMenu
                         .addToLore(
                             "${CC.GRAY}Current crate balance:",
                             "${CC.WHITE}${
-                                keyProvider().getKeysFor(player.uniqueId, crate.uniqueId)
+                                keyProvider().getKeysFor(player.uniqueId, crate)
                             } keys",
                             "",
                             "${CC.AQUA}Right-click to open crate.",

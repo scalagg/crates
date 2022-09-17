@@ -1,6 +1,5 @@
 package gg.scala.crates
 
-import gg.scala.crates.keys.KeyProvider
 import me.lucko.helper.utils.Players
 import net.evilblock.cubed.util.Color
 import org.bukkit.entity.Player

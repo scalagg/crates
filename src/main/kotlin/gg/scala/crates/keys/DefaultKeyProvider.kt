@@ -1,5 +1,6 @@
 package gg.scala.crates.keys
 
+import gg.scala.crates.crate.Crate
 import gg.scala.crates.player.CratesPlayerService
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -10,12 +11,12 @@ import java.util.concurrent.CompletableFuture
  */
 object DefaultKeyProvider : KeyProvider
 {
-    override fun getKeysFor(player: UUID, crate: String): Int
+    override fun getKeysFor(player: UUID, crate: Crate): Int
     {
         val cratesPlayer = CratesPlayerService.find(player)
             ?: return 0
 
-        return cratesPlayer.balances[crate] ?: 0
+        return cratesPlayer.balances[crate.uniqueId] ?: 0
     }
 
     override fun useKeyFor(player: UUID, crate: String): CompletableFuture<Void>

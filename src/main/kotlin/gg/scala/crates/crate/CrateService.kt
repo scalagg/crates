@@ -45,7 +45,7 @@ object CrateService
     {
         val balance = keyProvider()
             .getKeysFor(
-                player.uniqueId, crate.uniqueId
+                player.uniqueId, crate
             )
 
         if (balance <= 0)

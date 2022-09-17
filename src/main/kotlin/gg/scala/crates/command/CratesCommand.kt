@@ -36,7 +36,7 @@ object CratesCommand : ScalaCommand()
                         player,
                         "<crateDisplayName>" to it.displayName,
                         "<crateKeyBalance>" to keyProvider()
-                            .getKeysFor(player.uniqueId, it.uniqueId)
+                            .getKeysFor(player.uniqueId, it)
                             .toString().format("%,d"),
                     )
             }
