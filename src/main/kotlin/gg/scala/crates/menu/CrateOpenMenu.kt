@@ -72,7 +72,12 @@ class CrateOpenMenu(
         itemsRequired.removeLast()
         itemsRequired.add(selectedRandom)
 
+        Bukkit.broadcastMessage("=== Developer Debug ===")
         Bukkit.broadcastMessage("Selected: ${selectedRandom.name}")
+        Bukkit.broadcastMessage("Size of items required: ${itemsRequired.size}")
+        Bukkit.broadcastMessage("Required by logic: $iterationAmount")
+        Bukkit.broadcastMessage("Iteration speed selection: $iterationSpeedSelection")
+        Bukkit.broadcastMessage("=======================")
 
         // reset our auto-update interval after we decide the end choice
         autoUpdateInterval = 10L
