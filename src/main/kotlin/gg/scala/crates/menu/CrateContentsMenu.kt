@@ -50,13 +50,15 @@ class CrateContentsMenu(
             buttons[buttons.size] = ItemBuilder
                 .of(prize.material)
                 .name("${CC.B_AQUA}${prize.name}")
-                .addToLore(
-                    "${CC.GRAY}Rarity: ${prize.rarity.chatColor}${prize.rarity.name}",
-                    ""
-                )
                 .apply {
                     addToLore(*prize.description.toTypedArray())
                 }
+                .addToLore(
+                    "",
+                    "${CC.GRAY}Rarity: ${prize.rarity.chatColor}${prize.rarity.name}",
+                    "",
+                    if (!prize.applicableTo(player)) "${CC.RED}You cannot win this item!" else "${CC.GREEN}You are able to win this item!"
+                )
                 .toButton()
         }
 

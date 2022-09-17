@@ -2,16 +2,20 @@ package gg.scala.crates.menu
 
 import gg.scala.crates.configuration
 import gg.scala.crates.crate.Crate
+import gg.scala.crates.crate.prize.CratePrize
 import gg.scala.crates.player.CratesPlayerService
 import gg.scala.crates.sendToPlayer
 import me.lucko.helper.Schedulers
+import me.lucko.helper.random.RandomSelector
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import java.util.LinkedList
 
 /**
  * @author GrowlyX
@@ -25,6 +29,17 @@ class CrateOpenMenu(
     private var crateRollStopped = false
     private var manuallyClosed = false
 
+    private val applicable = this.crate.prizes
+        .sortedBy { it.weight }
+        .shuffled()
+        .filter {
+            it.applicableTo(this.player)
+        }
+        .toMutableList()
+
+    private val itemsRequired = LinkedList<CratePrize>()
+    private val selectedRandom: CratePrize
+
     init
     {
         autoUpdateInterval = 10L
@@ -32,11 +47,39 @@ class CrateOpenMenu(
         placeholdBorders = true
         autoUpdate = true
 
-        val endChoice = (1000L..1100L).random()
+        val iterationSpeedSelection = (1000L..1100L).random()
+        var iterationAmount = 0
+
+        while (autoUpdateInterval <= iterationSpeedSelection)
+        {
+            iterationAmount += 1
+            autoUpdateInterval += 20L
+        }
+
+        this.selectedRandom = RandomSelector
+            .weighted(applicable).pick()
+
+        while (iterationAmount < itemsRequired.size)
+        {
+            itemsRequired += applicable
+        }
+
+        while (itemsRequired.size != iterationAmount)
+        {
+            itemsRequired.removeLast()
+        }
+
+        itemsRequired.removeLast()
+        itemsRequired.add(selectedRandom)
+
+        Bukkit.broadcastMessage("Selected: ${selectedRandom.name}")
+
+        // reset our auto-update interval after we decide the end choice
+        autoUpdateInterval = 10L
 
         Schedulers.sync()
             .runRepeating({ task ->
-                if (autoUpdateInterval >= endChoice || manuallyClosed)
+                if (autoUpdateInterval >= iterationSpeedSelection || manuallyClosed)
                 {
                     crateRollStopped = true
                     task.closeSilently()
@@ -47,14 +90,6 @@ class CrateOpenMenu(
             }, 4L, 5L)
     }
 
-    private val applicable = this.crate.prizes
-        .sortedBy { it.weight }
-        .shuffled()
-        .filter {
-            it.applicableTo(this.player)
-        }
-        .toMutableList()
-
     override fun getButtons(player: Player): Map<Int, Button>
     {
         val buttons = mutableMapOf<Int, Button>()
@@ -62,21 +97,10 @@ class CrateOpenMenu(
         if (crateRollStopped)
         {
             this.autoUpdate = false
-            val prize = this.applicable.getOrNull(4)
-
-            if (prize == null)
-            {
-                configuration.crateWinFailure.sendToPlayer(player)
-                player.closeInventory()
-
-                refundCrateKey(player)
-                return buttons
-            }
-
-            prize.apply(player)
+            this.selectedRandom.apply(player)
 
             configuration.crateWin.sendToPlayer(
-                player, "<cratePrizeName>" to prize.name
+                player, "<cratePrizeName>" to this.selectedRandom.name
             )
 
             player.playSound(player.location, Sound.FIREWORK_LAUNCH, 1.0F, 1.0F)
@@ -84,18 +108,22 @@ class CrateOpenMenu(
         } else
         {
             // shift last to first, pushes everything else forward
-            val last = this.applicable.removeLast()
-            this.applicable.add(0, last)
-
+            this.itemsRequired.removeFirst()
             player.playSound(player.location, Sound.CLICK, 1.0F, 1.0F)
         }
 
         // add items in the current index to the button map
         for (index in 1..7)
         {
-            val prizeInIndex = this.applicable
-                .getOrNull(index)
-                ?: continue
+            val prizeInIndex = if (this.crateRollStopped)
+            {
+                this.selectedRandom
+            } else
+            {
+                this.itemsRequired
+                    .getOrNull(index)
+                    ?: continue
+            }
 
             if (this.crateRollStopped && index != 4)
             {
@@ -129,7 +157,7 @@ class CrateOpenMenu(
         {
             this.manuallyClosed = true
 
-            if (this.autoUpdateInterval >= 900)
+            if (this.autoUpdateInterval >= 400)
             {
                 configuration.crateWinRefundFailure.sendToPlayer(player)
                 return
