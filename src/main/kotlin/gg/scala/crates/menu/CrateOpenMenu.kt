@@ -32,6 +32,7 @@ class CrateOpenMenu(
     companion object
     {
         const val ITERATION_SPEED = 700L
+        const val ITERATION_BUMP = 20L
     }
 
     private var crateRollStopped = false
@@ -40,6 +41,12 @@ class CrateOpenMenu(
     private val applicable = this.crate.prizes
         .shuffled()
         .filter {
+            /**
+             * We have an option that allows players to receive the same
+             * item twice from crates.
+             *
+             * This functionality is turned off by default.
+             */
             (this.crate.applicable || it.applicableTo(this.player))
         }
         .toMutableList()
@@ -49,8 +56,6 @@ class CrateOpenMenu(
 
     private var expectedIterationAmount = 0
     private var iterationAmount = 0
-
-    private var start: Long? = null
 
     init
     {
@@ -73,7 +78,7 @@ class CrateOpenMenu(
         /**
          * Start our auto update interval at 10 ticks.
          *
-         * This value is bumped up linearly over the
+         * This value is bumped up +ITERATION_BUMP over the
          * course of the multiple menu iterations.
          */
         autoUpdateInterval = 10L
@@ -89,13 +94,12 @@ class CrateOpenMenu(
          *
          * Since one prize element is removed during each iteration,
          * we have to calculate this while compensating for the
-         * growth of delay with the iteration speed to ensure there
-         * aren't any weight synchronization issues.
+         * growth of delay with the iteration speed.
          */
         while (autoUpdateInterval <= ITERATION_SPEED)
         {
             expectedIterationAmount += 1
-            autoUpdateInterval += 20L
+            autoUpdateInterval += ITERATION_BUMP
         }
 
         sendDebug("Required by logic: $expectedIterationAmount")
@@ -140,18 +144,13 @@ class CrateOpenMenu(
     }
 
     /**
-     * We'll use this for the fun rainbow obfuscated slot logic.
+     * We'll use this for the fun rainbow-obfuscated slot logic.
      */
     private val availableColors = listOf(3, 2, 10, 4, 1, 13, 11, 9, 6, 14, 5)
     private var completedCompletionLogic = false
 
     override fun getButtons(player: Player): Map<Int, Button>
     {
-        if (start == null)
-        {
-            start = System.currentTimeMillis()
-        }
-
         val buttons = mutableMapOf<Int, Button>()
 
         if (!completedCompletionLogic)
@@ -161,9 +160,6 @@ class CrateOpenMenu(
             // Ensure the refresh delay is less than the targeted iteration speed.
             if (manuallyClosed || autoUpdateInterval >= ITERATION_SPEED)
             {
-                sendDebug(
-                    "Took ${System.currentTimeMillis() - start!!} ms to roll"
-                )
                 sendDebug(
                     "Went through $iterationAmount iterations, expected $expectedIterationAmount"
                 )
