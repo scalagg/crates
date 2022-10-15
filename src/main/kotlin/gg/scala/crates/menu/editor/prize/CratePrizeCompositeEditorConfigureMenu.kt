@@ -1,7 +1,6 @@
 package gg.scala.crates.menu.editor.prize
 
 import com.cryptomorin.xseries.XMaterial
-import gg.scala.cookie.settings.builder.MultiOptionPlayerSettingsBuilder
 import gg.scala.crates.CratesSpigotPlugin
 import gg.scala.crates.crate.Crate
 import gg.scala.crates.crate.CrateService
@@ -9,7 +8,6 @@ import gg.scala.crates.crate.prize.CratePrize
 import gg.scala.crates.crate.prize.CratePrizeRarity
 import gg.scala.crates.crate.prize.composable.CompositeCratePrize
 import gg.scala.crates.crate.prize.composable.CompositeCratePrizeEditSession
-import gg.scala.lemon.player.metadata.Metadata
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.menu.buttons.AddButton
@@ -142,7 +140,7 @@ class CratePrizeCompositeEditorConfigureMenu(
                     )
                     .fallbackOf("Common")
                     .providerOverrideOf { _, _ ->
-                        Metadata(this.session.rarity.name)
+                        this.session.rarity.name
                     }
                     .valueOverrideOf {
                         this.session.rarity = CratePrizeRarity.valueOf(it)
