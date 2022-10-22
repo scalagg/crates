@@ -1,5 +1,6 @@
 package gg.scala.crates
 
+import gg.scala.commons.config.annotations.Config
 import net.evilblock.cubed.util.CC
 import xyz.mkotb.configapi.comment.Comment
 
@@ -7,6 +8,7 @@ import xyz.mkotb.configapi.comment.Comment
  * @author GrowlyX
  * @since 8/13/2022
  */
+@Config("config")
 class CratesSpigotConfig
 {
     val debugMode = false
