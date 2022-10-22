@@ -33,8 +33,8 @@ repositories {
 dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
 
-    compileOnly "me.lucko:helper:5.6.10.2"
-    kapt "me.lucko:helper:5.6.10.2"
+    compileOnly "me.lucko:helper:5.6.13"
+    kapt "me.lucko:helper:5.6.13"
 
     compileOnly "gg.scala.store:spigot:0.1.3"
     compileOnly "gg.scala.lemon:bukkit:1.4.1"
