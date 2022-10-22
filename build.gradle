@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.7.20"
 
     compileOnly "me.lucko:helper:5.6.10.2"
     kapt "me.lucko:helper:5.6.10.2"
