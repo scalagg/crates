@@ -28,13 +28,6 @@ object CratesCommand : ScalaCommand()
     {
         if (configuration.displayCratesBalanceOnCratesDefaultCommand)
         {
-            player.sendMessage(
-                keyProvider().javaClass.name.split(".")
-                    .joinToString(".") {
-                        if (it.first().isUpperCase()) it else it.first().toString()
-                    }
-            )
-
             configuration.crateBalanceHeader.sendToPlayer(player)
 
             CrateService.allCrates().forEach {

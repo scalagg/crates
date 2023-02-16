@@ -55,6 +55,7 @@ class CrateEditorContentsMenu(
             buttons[buttons.size] = ItemBuilder
                 .copyOf(prize.material)
                 .name("${CC.B_GOLD}${prize.name}")
+                .setUnbreakable(true)
                 .addToLore(
                     "${CC.WHITE}Rarity: ${prize.rarity.chatColor}${prize.rarity.name}",
                     ""
